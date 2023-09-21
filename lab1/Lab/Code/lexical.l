@@ -86,16 +86,16 @@ SPACE       [ \t\r]+
 {TYPE}      { yylval = createNode("TYPE", ENUM_LEX_TYPE, yylineno, 0, NULL);
               strcpy(yylval->strVal, yytext);
               return TYPE; }
-(0x|0X)[0-9A-Fa-f]+[Gg] { printf("Error type A at Line %d: Illegal hexadecimal number \'%s\'\n", yylineno, yytext); 
+(0x|0X)[0-9a-fA-F]*[g-zG-Z][0-9a-fA-F]* { printf("Error type A at Line %d: Illegal hexadecimal number \'%s\'\n", yylineno, yytext); 
               lexError++; }
 {HEX}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = hexstrToi(yytext);
               return INT; }
+0[89]       { printf("Error type A at Line %d: Illegal octal number \'%s\'\n", yylineno, yytext); 
+              lexError++; }
 {OCT}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = octstrToi(yytext);
               return INT; }
-0[89]       { printf("Error type A at Line %d: Illegal octal number \'%s\'\n", yylineno, yytext); 
-              lexError++; }
 {DEC}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = atoi(yytext);
               return INT; }
