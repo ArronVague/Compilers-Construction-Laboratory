@@ -91,7 +91,7 @@ SPACE       [ \t\r]+
 {HEX}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = hexstrToi(yytext);
               return INT; }
-0[89]       { printf("Error type A at Line %d: Illegal octal number \'%s\'\n", yylineno, yytext); 
+0[0-7]*[89][0-7]*     { printf("Error type A at Line %d: Illegal octal number \'%s\'\n", yylineno, yytext); 
               lexError++; }
 {OCT}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = octstrToi(yytext);
