@@ -39,6 +39,10 @@ SPACE       [ \t\r]+
               while (!(a == '*' && b == '/')) { a = b; b = input(); } }
 ";"         { yylval = createNode("SEMI", ENUM_LEX_OTHER, yylineno, 0, NULL);
               return SEMI; }
+"["         { yylval = createNode("LB", ENUM_LEX_OTHER, yylineno, 0, NULL);
+              return LB; }
+"]"         { yylval = createNode("RB", ENUM_LEX_OTHER, yylineno, 0, NULL);
+              return RB; }
 ","         { yylval = createNode("COMMA", ENUM_LEX_OTHER, yylineno, 0, NULL);
               return COMMA; }
 "="         { yylval = createNode("ASSIGNOP", ENUM_LEX_OTHER, yylineno, 0, NULL);
@@ -63,10 +67,7 @@ SPACE       [ \t\r]+
               return LP; }
 ")"         { yylval = createNode("RP", ENUM_LEX_OTHER, yylineno, 0, NULL);
               return RP; }
-"["         { yylval = createNode("LB", ENUM_LEX_OTHER, yylineno, 0, NULL);
-              return LB; }
-"]"         { yylval = createNode("RB", ENUM_LEX_OTHER, yylineno, 0, NULL);
-              return RB; }
+
 "{"         { yylval = createNode("LC", ENUM_LEX_OTHER, yylineno, 0, NULL);
               return LC; }
 "}"         { yylval = createNode("RC", ENUM_LEX_OTHER, yylineno, 0, NULL);
