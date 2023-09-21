@@ -86,11 +86,11 @@ SPACE       [ \t\r]+
 {TYPE}      { yylval = createNode("TYPE", ENUM_LEX_TYPE, yylineno, 0, NULL);
               strcpy(yylval->strVal, yytext);
               return TYPE; }
+(0x|0X)[0-9a-fA-F]*[h-zH-Z]+[0-9a-fA-F]* { printf("Error type A at Line %d: Illegal Hex number \'%s\'\n", yylineno, yytext); 
+              lexError++; }
 {HEX}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = hexstrToi(yytext);
               return INT; }
-(0x|0X)[0-9a-fA-F]*[h-zH-Z]+[0-9a-fA-F]* { printf("Error type A at Line %d: Illegal Hex number \'%s\'\n", yylineno, yytext); 
-              lexError++; }
 {OCT}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = octstrToi(yytext);
               return INT; }
