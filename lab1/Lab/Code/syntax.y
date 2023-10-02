@@ -89,7 +89,7 @@ Tag : ID                                        { $$ = createNode("Tag", ENUM_SY
 VarDec : ID                                     { $$ = createNode("VarDec", ENUM_SYN_NOT_NULL, @$.first_line
                                                   , 1, package(1, $1)); }
     | VarDec LB INT RB                          { $$ = createNode("VarDec", ENUM_SYN_NOT_NULL, @$.first_line
-                                                  , 4, package(4, $1, $2, $3, $4)); }
+                                                  , 4, package(4, $1, $2, $3, $4)); }                                        
     | VarDec LB error RB                        { $$ = createNode("Error", ENUM_SYN_NULL, @$.first_line
                                                   , 0, NULL); yyerrok; }
     | VarDec LB error                           { $$ = createNode("Error", ENUM_SYN_NULL, @$.first_line
@@ -225,8 +225,10 @@ Exp : Exp ASSIGNOP Exp                          { $$ = createNode("Exp", ENUM_SY
                                                   , 0, NULL); yyerrok; }
     | ID LP error RP                            { $$ = createNode("Error", ENUM_SYN_NULL, @$.first_line
                                                   , 0, NULL); yyerrok; }
-    | Exp LB error RB                           { $$ = createNode("Error", ENUM_SYN_NULL, @$.first_line
-                                                  , 0, NULL); yyerrok; }
+    // | Exp LB error RB                           { $$ = createNode("Error", ENUM_SYN_NULL, @$.first_line
+    //                                               , 0, NULL); yyerror("Missing \"]\""); yyerrok; }
+        | Exp LB error RB                           { $$ = createNode("Error", ENUM_SYN_NULL, @$.first_line
+                                                  , 0, NULL);  yyerrok; }
     ;
 Args : Exp COMMA Args                           { $$ = createNode("Args", ENUM_SYN_NOT_NULL, @$.first_line
                                                   , 3, package(3, $1, $2, $3)); }

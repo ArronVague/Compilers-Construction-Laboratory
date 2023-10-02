@@ -556,7 +556,7 @@ static const yytype_uint8 yyrline[] =
      150,   152,   155,   158,   160,   162,   165,   167,   169,   174,
      176,   178,   180,   182,   184,   186,   188,   190,   192,   194,
      196,   198,   200,   202,   204,   206,   208,   210,   212,   214,
-     216,   218,   220,   222,   224,   226,   228,   231,   233
+     216,   218,   220,   222,   224,   226,   230,   233,   235
 };
 #endif
 
@@ -2184,21 +2184,21 @@ yyreduce:
     break;
 
   case 86:
-#line 228 "syntax.y"
-                                                { yyval = createNode("Error", ENUM_SYN_NULL, (yyloc).first_line
-                                                  , 0, NULL); yyerrok; }
+#line 230 "syntax.y"
+                                                    { yyval = createNode("Error", ENUM_SYN_NULL, (yyloc).first_line
+                                                  , 0, NULL);  yyerrok; }
 #line 2191 "syntax.tab.c"
     break;
 
   case 87:
-#line 231 "syntax.y"
+#line 233 "syntax.y"
                                                 { yyval = createNode("Args", ENUM_SYN_NOT_NULL, (yyloc).first_line
                                                   , 3, package(3, yyvsp[-2], yyvsp[-1], yyvsp[0])); }
 #line 2198 "syntax.tab.c"
     break;
 
   case 88:
-#line 233 "syntax.y"
+#line 235 "syntax.y"
                                                 { yyval = createNode("Args", ENUM_SYN_NOT_NULL, (yyloc).first_line
                                                   , 1, package(1, yyvsp[0])); }
 #line 2205 "syntax.tab.c"
@@ -2443,7 +2443,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 236 "syntax.y"
+#line 238 "syntax.y"
 
 Node** package(int childNum, Node* child1, ...) {
     va_list ap;

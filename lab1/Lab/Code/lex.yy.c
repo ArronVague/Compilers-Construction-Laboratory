@@ -370,8 +370,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 37
-#define YY_END_OF_BUFFER 38
+#define YY_NUM_RULES 38
+#define YY_END_OF_BUFFER 39
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -381,14 +381,14 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[82] =
     {   0,
-        0,    0,   38,   36,    2,    1,   15,   36,   16,   17,
+        0,    0,   39,   37,    2,    1,   15,   37,   16,   17,
        10,    8,    6,    9,   14,   11,   33,   33,    5,   27,
-        7,   27,   35,   18,   19,   35,   35,   35,   35,   35,
-       35,   20,   36,   21,    2,   27,   12,    0,    4,    3,
-        0,   32,   31,    0,   33,   35,   35,   35,   35,   24,
-       35,   35,   35,   35,   13,    0,   34,   31,    0,   30,
-       29,   35,   35,   28,   35,   35,   35,    0,   34,   29,
-       25,   35,   35,   35,   35,   35,   35,   26,   23,   22,
+        7,   27,   36,   18,   19,   36,   36,   36,   36,   36,
+       36,   20,   37,   21,    2,   27,   12,    0,    4,    3,
+        0,   32,   31,    0,   33,   36,   36,   36,   36,   24,
+       36,   36,   36,   36,   13,   34,   35,   31,    0,   30,
+       29,   36,   36,   28,   36,   36,   36,    0,   35,   29,
+       25,   36,   36,   36,   36,   36,   36,   26,   23,   22,
         0
     } ;
 
@@ -530,10 +530,10 @@ static const flex_int16_t yy_chk[285] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[38] =
+static const flex_int32_t yy_rule_can_match_eol[39] =
     {   0,
 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -1058,29 +1058,38 @@ YY_RULE_SETUP
 case 34:
 YY_RULE_SETUP
 #line 102 "lexical.l"
+{
+    printf("Error type A at Line %d: Illegal floating point number \"%s\"\n", yylineno, yytext);
+    lexError++;
+}
+	YY_BREAK
+case 35:
+YY_RULE_SETUP
+#line 106 "lexical.l"
 { yylval = createNode("FLOAT", ENUM_LEX_FLOAT, yylineno, 0, NULL);
               yylval->floatVal = atof(yytext);
               return FLOAT; }
 	YY_BREAK
-case 35:
+case 36:
 YY_RULE_SETUP
-#line 105 "lexical.l"
+#line 109 "lexical.l"
 { yylval = createNode("ID", ENUM_LEX_ID, yylineno, 0, NULL);
               strcpy(yylval->strVal, yytext);
               return ID; }
 	YY_BREAK
-case 36:
-YY_RULE_SETUP
-#line 108 "lexical.l"
-{ printf("Error type A at Line %d: Mysterious characters \'%s\'\n", yylineno, yytext); 
-              lexError++; }
-	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 110 "lexical.l"
+#line 112 "lexical.l"
+{ printf("Error type A at Line %d: Mysterious characters \"%s\"\n", yylineno, yytext); 
+              lexError++; 
+              printf("test: %d", lexError);}
+	YY_BREAK
+case 38:
+YY_RULE_SETUP
+#line 115 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1084 "lex.yy.c"
+#line 1093 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2097,7 +2106,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 110 "lexical.l"
+#line 115 "lexical.l"
 
 int charToi(char ch)
 {   // 如果是数字，则用数字的ASCII码减去48, 如果ch = '2' ,则 '2' - 48 = 2

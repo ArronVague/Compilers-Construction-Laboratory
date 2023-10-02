@@ -99,13 +99,17 @@ SPACE       [ \t\r]+
 {DEC}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = atoi(yytext);
               return INT; }
+({digit}*\.{digit}+|{digit}+\.)[eE] {
+    printf("Error type A at Line %d: Illegal floating point number \"%s\"\n", yylineno, yytext);
+    lexError++;
+}
 {FLOAT}     { yylval = createNode("FLOAT", ENUM_LEX_FLOAT, yylineno, 0, NULL);
               yylval->floatVal = atof(yytext);
               return FLOAT; }
 {ID}        { yylval = createNode("ID", ENUM_LEX_ID, yylineno, 0, NULL);
               strcpy(yylval->strVal, yytext);
               return ID; }
-.           { printf("Error type A at Line %d: Mysterious characters \'%s\'\n", yylineno, yytext); 
+.           { printf("Error type A at Line %d: Mysterious characters \"%s\"\n", yylineno, yytext); 
               lexError++; }
 %%
 int charToi(char ch)
