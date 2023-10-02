@@ -1081,15 +1081,14 @@ case 37:
 YY_RULE_SETUP
 #line 112 "lexical.l"
 { printf("Error type A at Line %d: Mysterious characters \"%s\"\n", yylineno, yytext); 
-              lexError++; 
-              printf("test: %d", lexError);}
+              lexError++; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 115 "lexical.l"
+#line 114 "lexical.l"
 ECHO;
 	YY_BREAK
-#line 1093 "lex.yy.c"
+#line 1092 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2106,7 +2105,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 115 "lexical.l"
+#line 114 "lexical.l"
 
 int charToi(char ch)
 {   // 如果是数字，则用数字的ASCII码减去48, 如果ch = '2' ,则 '2' - 48 = 2
