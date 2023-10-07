@@ -86,22 +86,30 @@ SPACE       [ \t\r]+
 {TYPE}      { yylval = createNode("TYPE", ENUM_LEX_TYPE, yylineno, 0, NULL);
               strcpy(yylval->strVal, yytext);
               return TYPE; }
+(0x|0X)[0-9a-fA-F]*[g-zG-Z][0-9a-fA-F]* { printf("Error type A at Line %d: Illegal hexadecimal number \'%s\'\n", yylineno, yytext); 
+              lexError++; }
 {HEX}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = hexstrToi(yytext);
               return INT; }
+0[0-7]*[89][0-7]*     { printf("Error type A at Line %d: Illegal octal number \'%s\'\n", yylineno, yytext); 
+              lexError++; }
 {OCT}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = octstrToi(yytext);
               return INT; }
 {DEC}       { yylval = createNode("INT", ENUM_LEX_INT, yylineno, 0, NULL);
               yylval->intVal = atoi(yytext);
               return INT; }
+({digit}*\.{digit}+|{digit}+\.)[eE] {
+    printf("Error type A at Line %d: Illegal floating point number \"%s\"\n", yylineno, yytext);
+    lexError++;
+}
 {FLOAT}     { yylval = createNode("FLOAT", ENUM_LEX_FLOAT, yylineno, 0, NULL);
               yylval->floatVal = atof(yytext);
               return FLOAT; }
 {ID}        { yylval = createNode("ID", ENUM_LEX_ID, yylineno, 0, NULL);
               strcpy(yylval->strVal, yytext);
               return ID; }
-.           { printf("Error type A at Line %d: Mysterious characters \'%s\'\n", yylineno, yytext); 
+.           { printf("Error type A at Line %d: Mysterious characters \"%s\"\n", yylineno, yytext); 
               lexError++; }
 %%
 int charToi(char ch)
