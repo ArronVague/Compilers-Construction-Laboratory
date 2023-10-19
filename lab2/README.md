@@ -122,3 +122,96 @@ struct Type_d {
   ```powershell
   sudo dhclient ens33
   ```
+
+## 选择完成2.3
+
+要求2.3：修改前面的C−−语言假设5，将结构体间的类型等价机制由名等价改为结构等价（Structural Equivalence）。例如，虽然名称不同，但两个结构体类型struct a { int x; float y; }和struct b { int y; float z; }仍然是等价的类型。注意，在结构等价时不要将数组展开来判断，例如struct A { int a; struct { float f; int i; } b[10]; }和struct B { struct { int i; float f; } b[10]; int b;}是不等价的。在新的假设5下，完成错误类型1至17的检查。
+
+### 样例5
+
+结构体赋值操作
+
+```c
+        // 赋值操作
+        else if (strcmp(root->children[1]->name, "ASSIGNOP") == 0)
+        {
+            // 左值只有三种情况
+            // 1、变量
+            // 2、域
+            // 3、数组元素
+            Node *left = root->children[0];
+            Node *right = root->children[2];
+            Type leftType = NULL;
+            Type rightType = Exp(right);
+            if ((left->childNum == 1 && strcmp(left->children[0]->name, "ID") == 0) ||
+                (left->childNum == 4 && strcmp(left->children[1]->name, "LB") == 0) ||
+                (left->childNum == 3 && strcmp(left->children[1]->name, "DOT") == 0))
+                leftType = Exp(left);
+            else
+            {
+                printf("Error type 6 at line %d: The left-hand side of an assignment must be a variable.\n", root->lineno);
+                return NULL;
+            }
+            if (leftType != NULL && rightType != NULL && !typeEqual(leftType, rightType))
+            {
+                printf("Error type 5 at line %d: Type mismatched for assignment.\n", root->lineno);
+                return NULL;
+            }
+            return leftType;
+        }
+```
+
+第一个if-else保证了赋值操作的左值必须是一个变量。
+
+能否赋值的关键是判断左右值`typeEqual()`的类型是否一致。
+
+`typeEqual()`中判断结构体类型结构是否等价的代码
+
+```c
+    // 结构体类型结构等价
+    else if (a->kind == ENUM_STRUCT)
+    {
+        FieldList aFields = a->structure->head;
+        FieldList bFields = b->structure->head;
+        int res = 1;
+        while (aFields != NULL && bFields != NULL)
+        {
+            if (!typeEqual(aFields->type, bFields->type))
+            {
+                res = 0;
+                break;
+            }
+            aFields = aFields->next;
+            bFields = bFields->next;
+        }
+        if (aFields != NULL || bFields != NULL)
+            res = 0;
+        return res;
+    }
+```
+
+每个变量都会存储自己的kind类型，当变量的kind为结构体时，进入结构体判断
+
+变量中的union存储实际的类型
+
+分别获取左右值结构体的结构体域链表头
+
+题目要求中
+
+> struct A { int a; struct { float f; int i; } b[10]; }和struct B { struct { int i; float f; } b[10]; int b;}
+
+可见，结构体是否等价，取决于结构体的变量是否相同，以及变量声明的顺序是否相同，并不关注变量的名字是否相同。因此，只需简单地对结构体域按链表顺序判断是否等价即可。
+
+很简单地判断两条链表是否相等。只是相等的判断方式替换成了`typeEqual()`
+
+判断失败的条件：
+
+- 结构体中变量类型不同
+
+- 变量声明顺序不同
+
+- 变量个数不同
+
+### 样例6
+
+完成了上面的代码，样例5和6都可以直接通过。两个样例都是声明两个struct a, b，并尝试a = b;
