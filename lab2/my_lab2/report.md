@@ -379,3 +379,11 @@
 - 变量声明顺序不同
 
 - 变量个数不同
+
+## 编译
+
+未修改Makefile，直接在Makefile文件所在目录下执行
+
+```powershell
+make
+```
