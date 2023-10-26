@@ -816,14 +816,14 @@ Type Exp(Node *root)
                 // 使用不存在的函数
                 else
                 {
-                    printf("Error type 2 at line %d: Undefined function \"%s\".\n", root->lineno, root->children[0]->strVal);
+                    printf("yes Error type 2 at line %d: Undefined function \"%s\".\n", root->lineno, root->children[0]->strVal);
                     return NULL;
                 }
             }
             // 使用未定义的函数
             if (sym->type->func->hasDefined == 0)
             {
-                printf("Error type 2 at line %d: Undefined function \"%s\".\n", root->lineno, sym->name);
+                printf("no Error type 2 at line %d: Undefined function \"%s\".\n", root->lineno, sym->name);
                 return NULL;
             }
             // 提供的参数
