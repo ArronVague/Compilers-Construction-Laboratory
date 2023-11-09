@@ -96,3 +96,31 @@ newTemp()中会自动记录生成的临时变量数，自增
 
 而getVar会用变量名生成变量操作数，前缀v
 
+表达式翻译
+
+目标
+
+> t2 := #0
+>
+> IF v1 >t2 GOTO label1
+>
+> GOTO label2
+>
+> LABEL label1 :
+>
+> t3 := #1
+>
+> WRITE t3
+
+错误的实现
+
+n > 0，需要一个临时变量t2赋值为0，然后v1与之比较
+
+FUNCTION main :
+vn := #1
+READ t2
+vn := t2
+LABEL null :
+LABEL label1 :
+WRITE #1
+LABEL label2 :？
