@@ -1,3 +1,9 @@
+vscode设置自动换行
+
+linux `ctrl + ,` 搜索word wrap，改为on
+
+
+
 Pre-add read and write functions.  
 
 function write() may has some mistakes
@@ -10,11 +16,11 @@ function write() may has some mistakes
 
 > FUNCTION main :
 >
-> READ t1
+> READ t1 
 >
 > v1 := t1
->
-> t2 := #0
+
+错误：
 
 assignCode是右值赋给临时变量t1
 
@@ -40,3 +46,53 @@ t2 := t1
 READ t1
  := t2
 RETURN #0
+
+正确：
+
+> FUNCTION main :
+> READ t1
+> vn := t1
+> RETURN #0
+
+```c
+		if (root->children[0]->childNum == 1 &&
+            strcmp(root->children[0]->children[0]->name, "ID") == 0)
+        {
+            // todo
+            // 通过查表找到ID对应的变量
+            Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
+
+            // Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
+            // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
+            Operand tmp1 = newTemp();
+            InterCode expCode = translateExp(root->children[2], tmp1);
+
+            // 将t1中的值赋于ID所对应的变量
+            InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
+            code1->kind = ASSIGN_IR;
+
+            
+            code1->ops[0] = getVar(leftOperand->name);
+            code1->ops[1] = tmp1;
+
+            if (place != NULL)
+            {
+                operandCpy(place, getVal(tmp1));
+            }
+            
+            insertInterCode(code1, expCode);
+
+            return expCode;
+        }
+```
+
+
+
+READ t1由translateExp产生
+
+t1的1怎么来的？
+
+newTemp()中会自动记录生成的临时变量数，自增
+
+而getVar会用变量名生成变量操作数，前缀v
+
