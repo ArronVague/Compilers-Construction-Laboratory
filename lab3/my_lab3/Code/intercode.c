@@ -472,26 +472,26 @@ InterCode translateExp(Node *root, Operand place)
             // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
             Operand rightOperand = newTemp();
             InterCode expCode = translateExp(root->children[2], rightOperand);
+            // 将t1中的值赋于ID所对应的变量
             Operand t1 = newTemp();
             InterCode assignCode = (InterCode)malloc(sizeof(InterCode_));
             assignCode->kind = ASSIGN_IR;
             assignCode->ops[0] = t1;
             assignCode->ops[1] = rightOperand;
-            // 将t1中的值赋于ID所对应的变量
-            InterCode assignIDcoe = (InterCode)malloc(sizeof(InterCode_));
-            assignIDcoe->kind = ASSIGN_IR;
-            assignIDcoe->ops[0] = leftOperand;
-            assignIDcoe->ops[1] = t1;
-            // 并将结果再存回place，最后把刚翻译好的这两段代码合并随后返回即可。
+            // Operand t1 = newTemp();
+            // InterCode expCode = translateExp(root->children[2], t1);
+
+            // InterCode assignCode = (InterCode)malloc(sizeof(InterCode_));
+
             if (place != NULL)
             {
                 operandCpy(place, getVal(leftOperand));
             }
 
-            insertInterCode(expCode, assignCode);
-            insertInterCode(assignCode, assignIDcoe);
+            insertInterCode(assignCode, expCode);
+            // insertInterCode(assignIDcode, assignCode);
 
-            return assignCode;
+            return expCode;
         }
         // 数组元素作为左值
         else if (root->children[0]->childNum == 4 &&
