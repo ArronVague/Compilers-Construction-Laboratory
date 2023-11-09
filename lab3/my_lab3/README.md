@@ -55,7 +55,7 @@ RETURN #0
 > RETURN #0
 
 ```c
-		if (root->children[0]->childNum == 1 &&
+	if (root->children[0]->childNum == 1 &&
             strcmp(root->children[0]->children[0]->name, "ID") == 0)
         {
             // todo
