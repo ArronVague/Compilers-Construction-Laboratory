@@ -468,6 +468,7 @@ InterCode translateExp(Node *root, Operand place)
         {
             // todo
             // 通过查表找到ID对应的变量
+            printf("translateExp: ID\n");
             Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
 
             // Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
@@ -626,6 +627,11 @@ InterCode translateExp(Node *root, Operand place)
                                      strcmp(root->children[1]->name, "OR") == 0))
     {
         // todo
+        printf("translateExp: condition\n");
+        Operand labelTrue = newLabel();
+        Operand labelFalse = newLabel();
+        InterCode code1 = translateCond(root, labelTrue, labelFalse);
+        return code1;
     }
     else if (strcmp(root->children[0]->name, "ID") == 0)
     {
@@ -844,6 +850,7 @@ InterCode translateStmt(Node *root)
     }
     else if (strcmp(root->children[0]->name, "IF") == 0 && root->childNum == 5)
     {
+        printf("translateStmt: IF\n");
         Operand label1 = newLabel();
         Operand label2 = newLabel();
         InterCode code1 = translateCond(root->children[2], label1, label2);
@@ -970,6 +977,60 @@ Pay attention to how to implement short-circuit translation.
 InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 {
     // todo
+    printf("translateCond\n");
+    Operand t1 = newTemp();
+    Operand t2 = newTemp();
+    InterCode code1 = translateExp(root->children[0], t1);
+    InterCode code2 = translateExp(root->children[2], t2);
+    
+    // get op
+    char *op = root->children[1]->name;
+    printf("op: %s\n", op);
+
+    InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+
+    if (strcmp(op, "RELOP") == 0)
+    {
+        printf("translateCond: RELOP\n");
+        code3->kind = IF_GOTO_IR;
+        code3->ops[0] = t1;
+        code3->ops[1] = t2;
+        code3->ops[2] = labelTrue;
+        printf("4\n");
+        strcpy(code3->relop, root->children[1]->strVal);
+        printf("relop: %s\n", code3->relop);
+    }
+    // insertInterCode(code2, code1);
+    // insertInterCode(code3, code1);
+    // else if (strcmp(op, "AND") == 0)
+    // {
+    //     code3->kind = IF_GOTO_IR;
+    //     code3->ops[0] = t1;
+    //     code3->ops[1] = labelFalse;
+    //     code3->ops[2] = labelTrue;
+    //     code3->relop = "!=";
+    // }
+    // else if (strcmp(op, "OR") == 0)
+    // {
+    //     code3->kind = IF_GOTO_IR;
+    //     code3->ops[0] = t1;
+    //     code3->ops[1] = labelTrue;
+    //     code3->ops[2] = labelFalse;
+    //     code3->relop = "==";
+    // }
+    // else if (strcmp(op, "NOT") == 0)
+    // {
+    //     code3->kind = IF_GOTO_IR;
+    //     code3->ops[0] = t1;
+    //     code3->ops[1] = labelFalse;
+    //     code3->ops[2] = labelTrue;
+    //     code3->relop = "==";
+    // }
+
+
+    // char *op = root->children[1]->strVal;
+
+    return code3;
 }
 
 void translateProgram(Node *root)
