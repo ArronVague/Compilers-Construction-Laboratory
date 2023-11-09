@@ -467,29 +467,28 @@ InterCode translateExp(Node *root, Operand place)
             strcmp(root->children[0]->children[0]->name, "ID") == 0)
         {
             // todo
-            // 通过查表找到ID对应的变量，
-            Operand leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
-            // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
-            Operand rightOperand = newTemp();
-            InterCode expCode = translateExp(root->children[2], rightOperand);
-            // 将t1中的值赋于ID所对应的变量
-            Operand t1 = newTemp();
-            InterCode assignCode = (InterCode)malloc(sizeof(InterCode_));
-            assignCode->kind = ASSIGN_IR;
-            assignCode->ops[0] = t1;
-            assignCode->ops[1] = rightOperand;
-            // Operand t1 = newTemp();
-            // InterCode expCode = translateExp(root->children[2], t1);
+            // 通过查表找到ID对应的变量
+            Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
 
-            // InterCode assignCode = (InterCode)malloc(sizeof(InterCode_));
+            // Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
+            // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
+            Operand tmp1 = newTemp();
+            InterCode expCode = translateExp(root->children[2], tmp1);
+
+            // 将t1中的值赋于ID所对应的变量
+            InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
+            code1->kind = ASSIGN_IR;
+
+            
+            code1->ops[0] = getVar(leftOperand->name);
+            code1->ops[1] = tmp1;
 
             if (place != NULL)
             {
-                operandCpy(place, getVal(leftOperand));
+                operandCpy(place, getVal(tmp1));
             }
-
-            insertInterCode(assignCode, expCode);
-            // insertInterCode(assignIDcode, assignCode);
+            
+            insertInterCode(code1, expCode);
 
             return expCode;
         }

@@ -1,2 +1,4 @@
 FUNCTION main :
+READ t1
+vn := t1
 RETURN #0
