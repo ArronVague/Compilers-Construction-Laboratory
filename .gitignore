@@ -3,3 +3,4 @@ bin-debug/
 bin-release/
 .vscode/
 /lab1/my_lab1/提交证明.png
+*.o
