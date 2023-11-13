@@ -124,3 +124,26 @@ LABEL null :
 LABEL label1 :
 WRITE #1
 LABEL label2 :？
+
+            printf("translateExp: ID\n");
+            Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
+    
+            // Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
+            // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
+            Operand tmp1 = newTemp();
+            InterCode expCode = translateExp(root->children[2], tmp1);
+    
+            // 将t1中的值赋于ID所对应的变量
+            InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
+            code1->kind = ASSIGN_IR;
+
+
+​            
+            code1->ops[0] = getVar(leftOperand->name);
+            code1->ops[1] = tmp1;
+
+
+if (root->children[0]->childNum == 1 &&
+            strcmp(root->children[0]->children[0]->name, "ID") == 0)
+       判断是否为一个变量
+
