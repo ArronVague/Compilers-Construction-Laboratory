@@ -1,8 +1,8 @@
 FUNCTION main :
-vn := #1
-READ t2
-vn := t2
-IF vn > #0 GOTO label1
+READ t1
+vn := t1
+t2 := #0
+IF vn > t2 GOTO label1
 LABEL label1 :
 WRITE #1
 LABEL label2 :

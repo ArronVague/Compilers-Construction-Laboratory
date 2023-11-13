@@ -978,10 +978,21 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 {
     // todo
     printf("translateCond\n");
-    Operand t1 = newTemp();
+    Entry leftOperand = NULL;
+    // check if root->children[0] is a variable number.
+    if (strcmp(root->children[0]->children[0]->name, "ID") == 0) {
+        printf("translateCond: ID\n");
+        leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
+    }
+
+    // check if root->children[2] is a const number.
     Operand t2 = newTemp();
-    InterCode code1 = translateExp(root->children[0], t1);
-    InterCode code2 = translateExp(root->children[2], t2);
+    InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
+    code2->kind = ASSIGN_IR;
+    code2->ops[0] = t2;
+    code2->ops[1] = getValue(root->children[2]->intVal);
+    code2->ops[2] = NULL;
+
     
     // get op
     char *op = root->children[1]->name;
@@ -993,14 +1004,14 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     {
         printf("translateCond: RELOP\n");
         code3->kind = IF_GOTO_IR;
-        code3->ops[0] = t1;
+        code3->ops[0] = getVar(leftOperand->name);
         code3->ops[1] = t2;
         code3->ops[2] = labelTrue;
         printf("4\n");
         strcpy(code3->relop, root->children[1]->strVal);
         printf("relop: %s\n", code3->relop);
     }
-    // insertInterCode(code2, code1);
+    insertInterCode(code3, code2);
     // insertInterCode(code3, code1);
     // else if (strcmp(op, "AND") == 0)
     // {
@@ -1030,7 +1041,7 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 
     // char *op = root->children[1]->strVal;
 
-    return code3;
+    return code2;
 }
 
 void translateProgram(Node *root)
