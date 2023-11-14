@@ -354,6 +354,28 @@ You need to finish Plus operation. You can refer to other subtraction and simila
 InterCode optimizePLUSIR(Operand dest, Operand src1, Operand src2)
 {
     // todo
+    if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP) {
+        operandCpy(dest, getValue(src1->value + src2->value));
+        return getNullInterCode();
+    }
+    else if (src1->kind == CONSTANT_OP && src1->value == 0 && 
+             src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP) {
+        operandCpy(dest, src2);
+        return getNullInterCode();
+    }
+    else if (src2->kind == CONSTANT_OP && src2->value == 0 &&
+             src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP) {
+        operandCpy(dest, src1);
+        return getNullInterCode();
+    }
+    else {
+        InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
+        code1->kind = PLUS_IR;
+        code1->ops[0] = dest;
+        code1->ops[1] = src1;
+        code1->ops[2] = src2;
+        return code1;
+    }
 }
 
 // 优化减法
