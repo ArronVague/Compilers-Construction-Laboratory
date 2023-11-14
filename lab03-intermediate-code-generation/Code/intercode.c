@@ -535,23 +535,22 @@ InterCode translateExp(Node *root, Operand place)
             // 通过查表找到ID对应的变量
             printf("translateExp: ID\n");
             Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
-
-            // Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
             // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
             Operand tmp1 = newTemp();
             InterCode code1 = translateExp(root->children[2], tmp1);
 
-            // 将t1中的值赋于ID所对应的变量
+            // 再将t1中的值赋于ID所对应的变量
             InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
             code2->kind = ASSIGN_IR;
             code2->ops[0] = getVar(leftOperand->name);
             code2->ops[1] = tmp1;
 
+            // 并将结果再存回place
             if (place != NULL)
             {
                 operandCpy(place, getVal(tmp1));
             }
-
+            // 最后把刚翻译好的这两段代码合并随后返回即可
             insertInterCode(code2, code1);
 
             return code1;
