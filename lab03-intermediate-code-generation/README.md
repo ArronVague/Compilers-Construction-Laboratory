@@ -139,11 +139,38 @@ LABEL label2 :？
 
 
 ​            
-            code1->ops[0] = getVar(leftOperand->name);
-            code1->ops[1] = tmp1;
-
+​            code1->ops[0] = getVar(leftOperand->name);
+​            code1->ops[1] = tmp1;
 
 if (root->children[0]->childNum == 1 &&
             strcmp(root->children[0]->children[0]->name, "ID") == 0)
        判断是否为一个变量
+
+完整目标
+
+> FUNCTION main :
+>
+> READ t1
+>
+> v1 := t1
+>
+> t2 := #0
+>
+> IF v1 > t2 GOTO label1
+>
+> GOTO label2（还没实现）
+>
+> LABEL label1 :
+> WRITE #1
+> GOTO label3
+> LABEL label2 :
+> t4 := #0
+> IF vn < t4 GOTO label4
+> LABEL label4 :
+> WRITE #-1
+> GOTO label3
+> LABEL label5 :
+> WRITE #0
+> LABEL label3 :
+> RETURN #0
 
