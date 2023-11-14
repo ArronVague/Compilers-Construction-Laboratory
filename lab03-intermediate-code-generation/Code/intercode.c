@@ -679,7 +679,7 @@ InterCode translateExp(Node *root, Operand place)
                                      strcmp(root->children[1]->name, "OR") == 0))
     {
         // todo
-        printf("translateExp: condition\n");
+        printf("seems that this situation not happen\n");
         Operand labelTrue = newLabel();
         Operand labelFalse = newLabel();
         InterCode code1 = translateCond(root, labelTrue, labelFalse);
