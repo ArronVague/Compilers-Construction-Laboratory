@@ -1,21 +1,25 @@
 FUNCTION fact :
 PARAM vn
 IF vn == #1 GOTO label1
-RETURN #1
+t6 := vn - #1
+ARG t6
+t5 := CALL fact
+t3 := vn * t5
+RETURN t3
 GOTO label3
 LABEL label1 :
 RETURN vn
 LABEL label3 :
 FUNCTION main :
-READ t4
-vm := t4
+READ t10
+vm := t10
 IF vm > #1 GOTO label4
 vresult := #1
 GOTO label6
 LABEL label4 :
 ARG vm
-t7 := CALL fact
-vresult := t7
+t13 := CALL fact
+vresult := t13
 LABEL label6 :
 WRITE vresult
 RETURN #0

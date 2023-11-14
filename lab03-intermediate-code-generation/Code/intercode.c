@@ -389,21 +389,51 @@ You need to finish Mul operation. You can refer to other Div and similar operati
 InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
 {
     // todo
+    // if two srcs are constant number then calculate the result
+    if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP) {
+        operandCpy(dest, getValue(src1->value * src2->value));
+        return getNullInterCode();
+    }
+    else if ((src1->kind == CONSTANT_OP && src1->value == 0) || (src2->kind == CONSTANT_OP && src2->value == 0)) {
+        operandCpy(dest, getValue(0));
+        return getNullInterCode();
+    }
+    else if (src1->kind == CONSTANT_OP && src1->value == 1 &&
+             src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP) {
+        operandCpy(dest, src2);
+        return getNullInterCode();
+    }
+    else if (src2->kind == CONSTANT_OP && src2->value == 1 &&
+             src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP) {
+        operandCpy(dest, src1);
+        return getNullInterCode();
+    }
+    else {
+        InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
+        code1->kind = MUL_IR;
+        code1->ops[0] = dest;
+        code1->ops[1] = src1;
+        code1->ops[2] = src2;
+        return code1;
+    }
 }
 
 // 优化除法
 InterCode optimizeDIVIR(Operand dest, Operand src1, Operand src2)
 {
+    // if two srcs are constant number then calculate the result
     if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP)
     {
         operandCpy(dest, getValue(src1->value / src2->value));
         return getNullInterCode();
     }
+    // if src1 is 0 then the result is 0
     else if (src1->kind == CONSTANT_OP && src1->value == 0)
     {
         operandCpy(dest, getValue(0));
         return getNullInterCode();
     }
+    // if src2 is 1 then the result is src1
     else if (src2->kind == CONSTANT_OP && src2->value == 1 &&
              src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP)
     {
