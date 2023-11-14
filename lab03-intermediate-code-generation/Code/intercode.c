@@ -539,23 +539,22 @@ InterCode translateExp(Node *root, Operand place)
             // Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
             // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
             Operand tmp1 = newTemp();
-            InterCode expCode = translateExp(root->children[2], tmp1);
+            InterCode code1 = translateExp(root->children[2], tmp1);
 
             // 将t1中的值赋于ID所对应的变量
-            InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
-            code1->kind = ASSIGN_IR;
-
-            code1->ops[0] = getVar(leftOperand->name);
-            code1->ops[1] = tmp1;
+            InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
+            code2->kind = ASSIGN_IR;
+            code2->ops[0] = getVar(leftOperand->name);
+            code2->ops[1] = tmp1;
 
             if (place != NULL)
             {
                 operandCpy(place, getVal(tmp1));
             }
 
-            insertInterCode(code1, expCode);
+            insertInterCode(code2, code1);
 
-            return expCode;
+            return code1;
         }
         // 数组元素作为左值
         else if (root->children[0]->childNum == 4 &&
