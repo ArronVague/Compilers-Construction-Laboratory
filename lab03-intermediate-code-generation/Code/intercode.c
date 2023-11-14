@@ -850,6 +850,7 @@ InterCode translateStmt(Node *root)
     }
     else if (strcmp(root->children[0]->name, "IF") == 0 && root->childNum == 5)
     {
+        // not this one
         printf("translateStmt: IF\n");
         Operand label1 = newLabel();
         Operand label2 = newLabel();
@@ -869,6 +870,7 @@ InterCode translateStmt(Node *root)
     }
     else if (strcmp(root->children[0]->name, "IF") == 0 && root->childNum == 7)
     {
+        printf("is this?\n");
         Operand label1 = newLabel();
         Operand label2 = newLabel();
         Operand label3 = newLabel();
@@ -987,11 +989,12 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 
     // check if root->children[2] is a const number.
     Operand t2 = newTemp();
-    InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
-    code2->kind = ASSIGN_IR;
-    code2->ops[0] = t2;
-    code2->ops[1] = getValue(root->children[2]->intVal);
-    code2->ops[2] = NULL;
+    InterCode code2 = translateExp(root->children[2], t2);
+
+    // code2->kind = ASSIGN_IR;
+    // code2->ops[0] = t2;
+    // code2->ops[1] = getValue(root->children[2]->intVal);
+    // code2->ops[2] = NULL;
 
     
     // get op
@@ -1011,7 +1014,13 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         strcpy(code3->relop, root->children[1]->strVal);
         printf("relop: %s\n", code3->relop);
     }
+    InterCode code4 = (InterCode)malloc(sizeof(InterCode_));
+    code4->kind = GOTO_IR;
+    code4->ops[0] = labelFalse;
+
+
     insertInterCode(code3, code2);
+    insertInterCode(code4, code2);
     // insertInterCode(code3, code1);
     // else if (strcmp(op, "AND") == 0)
     // {
