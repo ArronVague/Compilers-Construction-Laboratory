@@ -417,17 +417,19 @@ You need to finish Mul operation. You can refer to other Div and similar operati
 InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
 {
     // todo
-    // if two srcs are constant number then calculate the result
+    // 如果两个操作数都是常数，那么直接计算结果
     if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP)
     {
         operandCpy(dest, getValue(src1->value * src2->value));
         return getNullInterCode();
     }
+    // 如果其中一个操作数是0，那么直接返回0
     else if ((src1->kind == CONSTANT_OP && src1->value == 0) || (src2->kind == CONSTANT_OP && src2->value == 0))
     {
         operandCpy(dest, getValue(0));
         return getNullInterCode();
     }
+    // 如果其中一个操作数是1，那么直接返回另一个操作数
     else if (src1->kind == CONSTANT_OP && src1->value == 1 &&
              src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP)
     {
