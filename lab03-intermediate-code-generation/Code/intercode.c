@@ -354,21 +354,27 @@ You need to finish Plus operation. You can refer to other subtraction and simila
 InterCode optimizePLUSIR(Operand dest, Operand src1, Operand src2)
 {
     // todo
-    if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP) {
+    // 如果两个操作数都是常数，那么直接计算结果
+    if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP)
+    {
         operandCpy(dest, getValue(src1->value + src2->value));
         return getNullInterCode();
     }
-    else if (src1->kind == CONSTANT_OP && src1->value == 0 && 
-             src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP) {
+    // 如果其中一个操作数是0，那么直接返回另一个操作数
+    else if (src1->kind == CONSTANT_OP && src1->value == 0 &&
+             src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP)
+    {
         operandCpy(dest, src2);
         return getNullInterCode();
     }
     else if (src2->kind == CONSTANT_OP && src2->value == 0 &&
-             src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP) {
+             src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP)
+    {
         operandCpy(dest, src1);
         return getNullInterCode();
     }
-    else {
+    else
+    {
         InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
         code1->kind = PLUS_IR;
         code1->ops[0] = dest;
@@ -412,25 +418,30 @@ InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
 {
     // todo
     // if two srcs are constant number then calculate the result
-    if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP) {
+    if (src1->kind == CONSTANT_OP && src2->kind == CONSTANT_OP)
+    {
         operandCpy(dest, getValue(src1->value * src2->value));
         return getNullInterCode();
     }
-    else if ((src1->kind == CONSTANT_OP && src1->value == 0) || (src2->kind == CONSTANT_OP && src2->value == 0)) {
+    else if ((src1->kind == CONSTANT_OP && src1->value == 0) || (src2->kind == CONSTANT_OP && src2->value == 0))
+    {
         operandCpy(dest, getValue(0));
         return getNullInterCode();
     }
     else if (src1->kind == CONSTANT_OP && src1->value == 1 &&
-             src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP) {
+             src2->kind != GET_ADDR_OP && src2->kind != GET_VAL_OP)
+    {
         operandCpy(dest, src2);
         return getNullInterCode();
     }
     else if (src2->kind == CONSTANT_OP && src2->value == 1 &&
-             src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP) {
+             src1->kind != GET_ADDR_OP && src1->kind != GET_VAL_OP)
+    {
         operandCpy(dest, src1);
         return getNullInterCode();
     }
-    else {
+    else
+    {
         InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
         code1->kind = MUL_IR;
         code1->ops[0] = dest;
@@ -532,7 +543,6 @@ InterCode translateExp(Node *root, Operand place)
             InterCode code1 = (InterCode)malloc(sizeof(InterCode_));
             code1->kind = ASSIGN_IR;
 
-            
             code1->ops[0] = getVar(leftOperand->name);
             code1->ops[1] = tmp1;
 
@@ -540,7 +550,7 @@ InterCode translateExp(Node *root, Operand place)
             {
                 operandCpy(place, getVal(tmp1));
             }
-            
+
             insertInterCode(code1, expCode);
 
             return expCode;
@@ -1034,7 +1044,8 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     printf("translateCond\n");
     Entry leftOperand = NULL;
     // check if root->children[0] is a variable number.
-    if (strcmp(root->children[0]->children[0]->name, "ID") == 0) {
+    if (strcmp(root->children[0]->children[0]->name, "ID") == 0)
+    {
         printf("translateCond: ID\n");
         leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
     }
@@ -1048,7 +1059,6 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     // code2->ops[1] = getValue(root->children[2]->intVal);
     // code2->ops[2] = NULL;
 
-    
     // get op
     char *op = root->children[1]->name;
     printf("op: %s\n", op);
@@ -1069,7 +1079,6 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     InterCode code4 = (InterCode)malloc(sizeof(InterCode_));
     code4->kind = GOTO_IR;
     code4->ops[0] = labelFalse;
-
 
     insertInterCode(code3, code2);
     insertInterCode(code4, code2);
@@ -1098,7 +1107,6 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     //     code3->ops[2] = labelTrue;
     //     code3->relop = "==";
     // }
-
 
     // char *op = root->children[1]->strVal;
 
