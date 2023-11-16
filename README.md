@@ -1,6 +1,10 @@
 # Compilers-Construction-Laboratory
 A repo to store compilers construction lab's code.
 
+必备工具
+
+sudo apt-get install flex -y
+
 ## 遇到的各种问题
 
 ### 降低内核版本
