@@ -1073,13 +1073,13 @@ Pay attention to how to implement short-circuit translation.
 InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 {
     // todo
-    // ==
     printf("translateCond\n");
 
     // get op
     char *op = root->children[1]->name;
     printf("op: %s\n", op);
 
+    // ==, !=, >, <, >=, <=
     if (strcmp(op, "RELOP") == 0)
     {
         Entry leftOperand = NULL;
@@ -1110,11 +1110,15 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         insertInterCode(code4, code2);
         return code2;
     }
-
+    // !
+    else if (strcmp(op, "NOT") == 0)
+    {
+        // doubt whether it is right
+        // root->children[1] or root->children[0]?
+        return translateCond(root->children[1], labelFalse, labelTrue);
+    }
+    // &&
     // Exp1 AND Exp2
-    // // get op
-    // char *op = root->children[1]->name;
-    // printf("op: %s\n", op);
     else if (strcmp(op, "AND") == 0)
     {
         Operand label1 = newLabel();
@@ -1127,6 +1131,20 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         insertInterCode(code2, code1);
         return code1;
     }
+    // ||
+    else if (strcmp(op, "OR") == 0)
+    {
+        Operand label1 = newLabel();
+        InterCode code1 = translateCond(root->children[0], labelTrue, label1);
+        InterCode code2 = translateCond(root->children[2], labelTrue, labelFalse);
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = LABEL_IR;
+        code3->ops[0] = label1;
+        insertInterCode(code3, code1);
+        insertInterCode(code2, code1);
+        return code1;
+    }
+    // else
     else
     {
         printf("else\n");
