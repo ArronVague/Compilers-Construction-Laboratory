@@ -88,7 +88,7 @@ InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
 
 ### 左值单变量赋值表达式翻译
 
-通过查表函数findSymbolAll(char* name)找到对应的变量。需要提一点的是，创建变量操作数时，getVar(char* name)应该传入1、2、3这样的整数生成v1、v2、v3类似这种变量操作数名。但本次实验的假设提到：
+通过查表函数`findSymbolAll(char* name)`找到对应的变量。需要提一点的是，创建变量操作数时，`getVar(char* name)`应该传入1、2、3这样的整数生成v1、v2、v3类似这样的变量操作数名。但本次实验的假设提到：
 
 > 在本次实验中，对C--语言做如下假设
 >
@@ -96,7 +96,7 @@ InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
 > - 假设4：没有全局变量的使用，并且所有变量均不重名。
 > - ...
 
-因此，直接使用变量自己的名字作为参数getVar(leftOperand->name)。
+因此，直接使用变量自己的名字作为参数`getVar(leftOperand->name)`。
 
 ```c
         // 单个变量作为左值
@@ -149,6 +149,23 @@ RETURN #0
 ```
 
 vn表示n。
+
+### translateCond
+
+由于四个测试用例test1.cmm、test2.cmm、test_o1.cmm、test_o2.cmm中没有条件表达式和短路的代码。因此，自行写了一个测试用例。
+
+观察到基本表达式翻译模式中Exp1 RELOP Exp2及相关部分，code0 = [place := #0]以及code2 = [LABEL label1] + [place := #1]，条件表达式的最终结果都是int类型的0或1，没有隐式转换，因此不能用bool，用int flag效果一样。bool实际上也就是0或1？
+
+```
+int main() {
+    int n = 1;
+    int flag;
+    flag = (n > 0 && n > 1);
+    return 0;
+}
+```
+
+
 
 ## 编译
 
