@@ -20,7 +20,7 @@ A repo to store compilers construction lab's code.
 我的解决办法：
 
 ```
-apt install libbison-dev
+sudo apt install libbison-dev
 ```
 
 ### 多电脑使用相同虚拟机
