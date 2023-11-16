@@ -5,6 +5,8 @@ A repo to store compilers construction lab's code.
 
 ### 降低内核版本
 
+实验环境内核5.13.0-44-generic
+
 [Ubuntu20.04 如何降低内核版本_ubuntu降低内核_JSYRD的博客-CSDN博客](https://blog.csdn.net/qq_49814035/article/details/116035670)
 
 ### 找不到liby.a
@@ -43,3 +45,63 @@ linux/windows中 `ctrl + ,` 搜索word wrap，改为on
 
 [Ubuntu 20.04默认全局缩放修改，简单五步即可实现](https://blog.csdn.net/Pthumeru/article/details/119304019)
 
+### win11使用wsl
+
+#### 方法一
+
+直接下载，会自动安装最新的ubuntu
+
+```bash
+wsl -l
+```
+
+#### 方法二
+
+##### 导入
+
+```bash
+wsl --import <Distribution Name> <InstallLocation> <FileName>
+```
+
+例如
+
+```bash
+wsl --import compilers D://Software/SoftwareData/compilers D://Software/SoftwareData/compilers/compilers.tar
+```
+
+##### 运行
+
+```bash
+wsl -d <Distribution Name>
+```
+
+##### 设置用户账户
+
+```bash
+NEW_USER=<USERNAME> // <USERNAME>替换成你的用户名
+useradd -m -G sudo -s /bin/bash "$NEW_USER"
+passwd "$NEW_USER"
+```
+
+##### 设定默认用户
+
+```bash
+tee /etc/wsl.conf <<_EOF
+[user]
+default=${NEW_USER}
+_EOF
+```
+
+##### 问题
+
+```bash
+wsl: A localhost proxy configuration was detected but not mirrored into WSL. WSL in NAT mode does not support localhost proxies.
+```
+
+###### 方法一
+
+把clash或其他代理客户端开TUN MODE。
+
+###### 方法二
+
+[WSL2配置代理](https://www.cnblogs.com/tuilk/p/16287472.html)
