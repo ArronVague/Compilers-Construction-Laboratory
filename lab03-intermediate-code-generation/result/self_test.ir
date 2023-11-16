@@ -1,0 +1,13 @@
+FUNCTION main :
+vn := #1
+t3 := #0
+IF vn > #0 GOTO label3
+GOTO label2
+LABEL label3 :
+IF vn > #1 GOTO label1
+GOTO label2
+LABEL label1 :
+t3 := #1
+LABEL label2 :
+vflag := t3
+RETURN #0
