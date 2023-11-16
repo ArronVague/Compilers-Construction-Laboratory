@@ -39,5 +39,7 @@ apt install libbison-dev
 
 linux/windows中 `ctrl + ,` 搜索word wrap，改为on
 
+### Ubuntu 18.04/20.04默认全局缩放修改
 
+[Ubuntu 20.04默认全局缩放修改，简单五步即可实现](https://blog.csdn.net/Pthumeru/article/details/119304019)
 
