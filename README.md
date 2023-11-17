@@ -15,7 +15,7 @@ sudo apt-get install flex -y
 
 ### 找不到liby.a
 
-```
+```bash
 /usr/bin/ld: connot find -ly
 ```
 
@@ -23,7 +23,7 @@ sudo apt-get install flex -y
 
 我的解决办法：
 
-```
+```bash
 sudo apt install libbison-dev
 ```
 
@@ -37,7 +37,7 @@ sudo apt install libbison-dev
 
 - 虚拟机中
 
-  ```powershell
+  ```bash
   sudo dhclient ens33
   ```
 
@@ -51,7 +51,7 @@ linux/windows中 `ctrl + ,` 搜索word wrap，改为on
 
 ### win11使用wsl
 
-#### 方法一
+#### 方法一：直接下载
 
 直接下载，会自动安装最新的ubuntu
 
@@ -59,7 +59,7 @@ linux/windows中 `ctrl + ,` 搜索word wrap，改为on
 wsl -l
 ```
 
-#### 方法二
+#### 方法二：导入
 
 ##### 导入
 
@@ -102,17 +102,15 @@ _EOF
 wsl: A localhost proxy configuration was detected but not mirrored into WSL. WSL in NAT mode does not support localhost proxies.
 ```
 
-###### 方法一
+###### 方法一：开启TUN MODE
 
 把clash或其他代理客户端开TUN MODE。
 
-###### 方法二
+###### 方法二：WSL2配置代理
 
-WSL2配置代理
+**新建脚本`proxy.sh`**
 
-新建脚本proxy.sh
-
-```
+```sh
 #!/bin/sh
 hostip=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }')
 wslip=$(hostname -I | awk '{print $1}')
@@ -143,8 +141,8 @@ unset_proxy(){
   unset HTTPS_PROXY
   unset ALL_PROXY
   unset all_proxy
-  git config --global --unset http.https://github.com.proxy
-  git config --global --unset https.https://github.com.proxy
+  git config --global --unset http.proxy
+  git config --global --unset https.proxy
  
   echo "Proxy has been closed."
 }
@@ -177,13 +175,13 @@ else
 fi
 ```
 
-注意：其中第4行的``更换为自己的代理端口号。
+注意：其中第4行的`port`更换为自己的代理端口号。
 
 - `source ./proxy.sh set`：开启代理
 - `source ./proxy.sh unset`：关闭代理
 - `source ./proxy.sh test`：查看代理状态
 
-任意路径下开启代理
+**任意路径下开启代理**
 
 可以在`~/.bashrc`中添加如下内容，并将其中的路径修改为上述脚本的路径：
 
@@ -203,9 +201,9 @@ source ~/.bashrc
 - `proxy unset`：关闭代理
 - `proxy test`：查看代理状态
 
-自动设置代理
+**自动设置代理**
 
-也可以添加如下内容，即在每次shell启动时自动设置代理，同样的，更改其中的路径为自己的脚本路径：
+也可以在`~/.bashrc`添加如下内容，即在每次shell启动时自动设置代理，同样的，更改其中的路径为自己的脚本路径：
 
 ```bash
 . /path/to/proxy.sh set
@@ -213,8 +211,10 @@ source ~/.bashrc
 
 使用`curl`即可验证代理是否成功，如果有返回值则说明代理成功。
 
-```shell
+```bash
 curl www.google.com
 ```
+
+**参考文献**
 
 [WSL2配置代理](https://www.cnblogs.com/tuilk/p/16287472.html)
