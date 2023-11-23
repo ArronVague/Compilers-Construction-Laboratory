@@ -48,6 +48,7 @@ test: parser_
 	./parser ../Test/test2.cmm ../result/test_case2.ir
 	./parser ../Test/test_o1.cmm ../result/test_case_o1.ir
 	./parser ../Test/test_o2.cmm ../result/test_case_o2.ir
+	./parser ../Test/self_test.cmm ../result/self_test.ir 
 
 clean:
 	rm -f parser lex.yy.c syntax.tab.c syntax.tab.h syntax.output
