@@ -690,22 +690,18 @@ InterCode translateExp(Node *root, Operand place)
     {
         // todo
         printf("seems that this situation not happen\n");
-        // label1 = new_label()
-        // label2 = new_label()
         Operand label1 = newLabel();
+
         Operand label2 = newLabel();
 
-        // code0 = [place := #0]
         InterCode code0 = (InterCode)malloc(sizeof(InterCode_));
         code0->kind = ASSIGN_IR;
         code0->ops[0] = place;
         code0->ops[1] = getValue(0);
         code0->ops[2] = NULL;
 
-        // code1 = translate_Cond(Exp, label1, label2, sym_table)
         InterCode code1 = translateCond(root, label1, label2);
-        // code2 = [LABEL label1] + [place := #1]
-        // connect code2 and code3 we get code2
+
         InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
         code2->kind = LABEL_IR;
         code2->ops[0] = label1;
@@ -715,8 +711,7 @@ InterCode translateExp(Node *root, Operand place)
         code3->ops[0] = place;
         code3->ops[1] = getValue(1);
         code3->ops[2] = NULL;
-        // return code0 + code1 + code2 + [LABEL label2]
-        // code4 is [LABEL label2]
+
         InterCode code4 = (InterCode)malloc(sizeof(InterCode_));
         code4->kind = LABEL_IR;
         code4->ops[0] = label2;
