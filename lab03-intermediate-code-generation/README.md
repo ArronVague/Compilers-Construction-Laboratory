@@ -128,7 +128,7 @@ InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
         }
 ```
 
-#### 结果
+#### 测试结果
 
 test1.cmm稍作修改
 
@@ -150,9 +150,9 @@ RETURN #0
 
 vn表示n。
 
-### translateCond
+### 短路翻译
 
-在完成条件表达式之前，先完成translateCond。实际上就是照抄翻译模式。我的做法是先获取op，root->childNum<2时，op不会赋值，就是一个“no matter”字符串，下面的所有条件都不会满足，最终执行else里面的代码。root->childNum==2的情况，也就是NOT表达式，获取op以及翻译时，都要进行特殊处理。
+在完成条件表达式之前，先完成`translateCond(Node *root, Operand labelTrue, Operand labelFalse)`。实际上就是照抄翻译模式。我的做法是先获取`op`，`root->childNum < 2`时，op不会赋值，就是一个`“no matter”`字符串，下面的所有条件都不会满足，最终执行`else`里面的代码。`root->childNum == 2`的情况，也就是NOT表达式，获取`op`以及翻译时，都要进行特殊处理。
 
 ```c
 InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
@@ -251,58 +251,9 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 }
 ```
 
-由于四个测试用例test1.cmm、test2.cmm、test_o1.cmm、test_o2.cmm中没有条件表达式和短路的代码。因此，自行写了一个测试用例。
-
-观察到基本表达式翻译模式中Exp1 RELOP Exp2及相关部分，code0 = [place := #0]以及code2 = [LABEL label1] + [place := #1]，条件表达式的最终结果都是int类型的0或1，没有隐式转换，因此不能用bool，用int flag效果一样。bool实际上也就是0或1？
-
-这个测试用例囊括了几乎条件表达式的所有情况。
-
-```
-int main() {
-    int n = 1;
-    int flag;
-    flag = !(n > 0 && (n || n == 0));
-    return 0;
-}
-```
-
-#### 结果
-
-```
-FUNCTION main :
-vn := #1
-t2 := #0
-t4 := #0
-IF vn > #0 GOTO label5
-GOTO label4
-LABEL label5 :
-t8 := #0
-IF vn != #0 GOTO label6
-GOTO label8
-LABEL label8 :
-IF vn == #0 GOTO label6
-GOTO label7
-LABEL label6 :
-t8 := #1
-LABEL label7 :
-IF t8 != #0 GOTO label3
-GOTO label4
-LABEL label3 :
-t4 := #1
-LABEL label4 :
-IF t4 != #0 GOTO label2
-GOTO label1
-LABEL label1 :
-t2 := #1
-LABEL label2 :
-vflag := t2
-RETURN #0
-
-```
-
 ### 条件表达式
 
-实际上还是照抄翻译模式。注意运用上面完成的translateCond。
+实际上还是照抄翻译模式。注意运用上面完成的`translateCond(Node *root, Operand labelTrue, Operand labelFalse)`。
 
 ```c
     else if (root->childNum >= 2 && (strcmp(root->children[0]->name, "NOT") == 0 ||
@@ -345,9 +296,57 @@ RETURN #0
     }
 ```
 
+由于四个测试用例test1.cmm、test2.cmm、test_o1.cmm、test_o2.cmm中没有条件表达式和短路的代码。因此，自行写了一个测试用例。
+
+观察到基本表达式翻译模式中Exp1 RELOP Exp2及相关部分，code0 = [place := #0]以及code2 = [LABEL label1] + [place := #1]，条件表达式的最终结果都是`int`类型的0或1，虽然没有`bool`类型，但可以用`int flag`假装`bool`。实际上，一个bit位表示的`bool`变量，也就只有0、1两种状态。
+
+这个测试用例囊括了条件表达式和短路的几乎所有情况。
+
+```
+int main() {
+    int n = 1;
+    int flag;
+    flag = !(n > 0 && (n || n == 0));
+    return 0;
+}
+```
+
+#### 结果
+
+```
+FUNCTION main :
+vn := #1
+t2 := #0
+t4 := #0
+IF vn > #0 GOTO label5
+GOTO label4
+LABEL label5 :
+t8 := #0
+IF vn != #0 GOTO label6
+GOTO label8
+LABEL label8 :
+IF vn == #0 GOTO label6
+GOTO label7
+LABEL label6 :
+t8 := #1
+LABEL label7 :
+IF t8 != #0 GOTO label3
+GOTO label4
+LABEL label3 :
+t4 := #1
+LABEL label4 :
+IF t4 != #0 GOTO label2
+GOTO label1
+LABEL label1 :
+t2 := #1
+LABEL label2 :
+vflag := t2
+RETURN #0
+```
+
 ## 编译
 
-在Makefile文件添加了运行命令。
+在Makefile文件添加了命令，对PPT的四个样例以及我自己写的短路条件表达式总共五个样例进行测试。
 
 ```makefile
 # 定义的一些伪目标
@@ -357,6 +356,7 @@ test: parser_
 	./parser ../Test/test2.cmm ../result/test_case2.ir
 	./parser ../Test/test_o1.cmm ../result/test_case_o1.ir
 	./parser ../Test/test_o2.cmm ../result/test_case_o2.ir
+	./parser ../Test/self_test.cmm ../result/self_test.ir 
 ```
 
 ### 编译并测试
