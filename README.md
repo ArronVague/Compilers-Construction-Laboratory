@@ -3,7 +3,11 @@ A repo to store compilers construction lab's code.
 
 必备工具
 
-sudo apt-get install flex -y
+```bash
+sudo apt install make
+sudo apt-get install flex
+sudo apt-get install bison
+```
 
 ## 遇到的各种问题
 
@@ -21,7 +25,7 @@ sudo apt-get install flex -y
 
 [找不到-ly错误-腾讯云开发者社区-腾讯云](https://cloud.tencent.com/developer/ask/sof/110092092)
 
-我的解决办法：
+我的解决办法（直接用这个）
 
 ```bash
 sudo apt install libbison-dev
