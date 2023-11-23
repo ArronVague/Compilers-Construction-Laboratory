@@ -1,6 +1,6 @@
 int main() {
     int n = 1;
     int flag;
-    flag = (n > 0 && n > 1);
+    flag = !(n > 0);
     return 0;
 }

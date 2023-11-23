@@ -1,13 +1,16 @@
 FUNCTION main :
 vn := #1
-t3 := #0
+t2 := #0
+t4 := #0
 IF vn > #0 GOTO label3
-GOTO label2
+GOTO label4
 LABEL label3 :
-IF vn > #1 GOTO label1
-GOTO label2
+t4 := #1
+LABEL label4 :
+IF t4 != #0 GOTO label2
+GOTO label1
 LABEL label1 :
-t3 := #1
+t2 := #1
 LABEL label2 :
-vflag := t3
+vflag := t2
 RETURN #0

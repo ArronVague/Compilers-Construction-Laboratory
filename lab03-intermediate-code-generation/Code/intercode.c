@@ -1074,9 +1074,41 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 {
     // todo
     printf("translateCond\n");
+    // Specially handle the case of root->childNum < 2
+    if (root->childNum < 2)
+    {
+        printf("childNum < 2\n");
+        // t1 = new_temp()
+        Operand t1 = newTemp();
+        // code1 = translate_Exp(Exp, sym_table, t1)
+        InterCode code1 = translateExp(root, t1);
+        // code2 = [IF t1 != #0 GOTO label_true]
+        InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
+        code2->kind = IF_GOTO_IR;
+        code2->ops[0] = t1;
+        code2->ops[1] = getValue(0);
+        code2->ops[2] = labelTrue;
+        strcpy(code2->relop, "!=");
+        // return code1 + code2 + [GOTO label_false]
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = GOTO_IR;
+        code3->ops[0] = labelFalse;
+        insertInterCode(code2, code1);
+        insertInterCode(code3, code1);
+        return code1;
+    }
 
     // get op
-    char *op = root->children[1]->name;
+    char *op;
+    if (root->childNum == 2)
+    {
+        op = root->children[0]->name;
+    }
+    else
+    {
+        op = root->children[1]->name;
+    }
+
     printf("op: %s\n", op);
 
     // ==, !=, >, <, >=, <=
@@ -1110,13 +1142,12 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         insertInterCode(code4, code2);
         return code2;
     }
-    // !
     else if (strcmp(op, "NOT") == 0)
     {
-        // doubt whether it is right
-        // root->children[1] or root->children[0]?
+        printf("translateCond: NOT\n");
         return translateCond(root->children[1], labelFalse, labelTrue);
     }
+
     // &&
     // Exp1 AND Exp2
     else if (strcmp(op, "AND") == 0)
