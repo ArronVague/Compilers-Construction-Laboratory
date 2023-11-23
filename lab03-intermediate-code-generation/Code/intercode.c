@@ -1074,70 +1074,38 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 {
     // todo
     printf("translateCond\n");
-    // Specially handle the case of root->childNum < 2
-    if (root->childNum < 2)
-    {
-        printf("childNum < 2\n");
-        // t1 = new_temp()
-        Operand t1 = newTemp();
-        // code1 = translate_Exp(Exp, sym_table, t1)
-        InterCode code1 = translateExp(root, t1);
-        // code2 = [IF t1 != #0 GOTO label_true]
-        InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
-        code2->kind = IF_GOTO_IR;
-        code2->ops[0] = t1;
-        code2->ops[1] = getValue(0);
-        code2->ops[2] = labelTrue;
-        strcpy(code2->relop, "!=");
-        // return code1 + code2 + [GOTO label_false]
-        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
-        code3->kind = GOTO_IR;
-        code3->ops[0] = labelFalse;
-        insertInterCode(code2, code1);
-        insertInterCode(code3, code1);
-        return code1;
-    }
 
     // get op
-    char *op;
+    char *op = "no matter";
     if (root->childNum == 2)
     {
         op = root->children[0]->name;
     }
-    else
+    else if (root->childNum > 2)
     {
         op = root->children[1]->name;
     }
 
-    printf("op: %s\n", op);
-
-    // ==, !=, >, <, >=, <=
     if (strcmp(op, "RELOP") == 0)
     {
-        Entry leftOperand = NULL;
-        // check if root->children[0] is a variable number.
-        if (strcmp(root->children[0]->children[0]->name, "ID") == 0)
-        {
-            printf("translateCond: ID\n");
-            leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
-        }
+        Operand t1 = newTemp();
 
-        // check if root->children[2] is a const number.
         Operand t2 = newTemp();
+
+        InterCode code1 = translateExp(root->children[0], t1);
+
         InterCode code2 = translateExp(root->children[2], t2);
-        printf("translateCond: RELOP\n");
+
         InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
         code3->kind = IF_GOTO_IR;
-        code3->ops[0] = getVar(leftOperand->name);
+        code3->ops[0] = t1;
         code3->ops[1] = t2;
         code3->ops[2] = labelTrue;
-        printf("4\n");
         strcpy(code3->relop, root->children[1]->strVal);
-        printf("relop: %s\n", code3->relop);
+
         InterCode code4 = (InterCode)malloc(sizeof(InterCode_));
         code4->kind = GOTO_IR;
         code4->ops[0] = labelFalse;
-
         insertInterCode(code3, code2);
         insertInterCode(code4, code2);
         return code2;
@@ -1147,14 +1115,14 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         printf("translateCond: NOT\n");
         return translateCond(root->children[1], labelFalse, labelTrue);
     }
-
-    // &&
-    // Exp1 AND Exp2
     else if (strcmp(op, "AND") == 0)
     {
         Operand label1 = newLabel();
+
         InterCode code1 = translateCond(root->children[0], label1, labelFalse);
+
         InterCode code2 = translateCond(root->children[2], labelTrue, labelFalse);
+
         InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
         code3->kind = LABEL_IR;
         code3->ops[0] = label1;
@@ -1162,12 +1130,14 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         insertInterCode(code2, code1);
         return code1;
     }
-    // ||
     else if (strcmp(op, "OR") == 0)
     {
         Operand label1 = newLabel();
+
         InterCode code1 = translateCond(root->children[0], labelTrue, label1);
+
         InterCode code2 = translateCond(root->children[2], labelTrue, labelFalse);
+
         InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
         code3->kind = LABEL_IR;
         code3->ops[0] = label1;
@@ -1175,18 +1145,20 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
         insertInterCode(code2, code1);
         return code1;
     }
-    // else
     else
     {
         printf("else\n");
         Operand t1 = newTemp();
+
         InterCode code1 = translateExp(root, t1);
+
         InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
         code2->kind = IF_GOTO_IR;
         code2->ops[0] = t1;
         code2->ops[1] = getValue(0);
         code2->ops[2] = labelTrue;
         strcpy(code2->relop, "!=");
+
         InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
         code3->kind = GOTO_IR;
         code3->ops[0] = labelFalse;
