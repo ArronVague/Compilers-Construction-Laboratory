@@ -2,7 +2,19 @@ FUNCTION main :
 vn := #1
 t2 := #0
 t4 := #0
-IF vn > #0 GOTO label3
+IF vn > #0 GOTO label5
+GOTO label4
+LABEL label5 :
+t8 := #0
+IF vn != #0 GOTO label6
+GOTO label8
+LABEL label8 :
+IF vn == #0 GOTO label6
+GOTO label7
+LABEL label6 :
+t8 := #1
+LABEL label7 :
+IF t8 != #0 GOTO label3
 GOTO label4
 LABEL label3 :
 t4 := #1
