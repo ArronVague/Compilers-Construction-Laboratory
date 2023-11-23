@@ -311,7 +311,7 @@ int main() {
 }
 ```
 
-#### 结果
+#### 测试结果
 
 ```
 FUNCTION main :
@@ -343,6 +343,10 @@ LABEL label2 :
 vflag := t2
 RETURN #0
 ```
+
+## 结果输出文件
+
+放在result文件夹下。
 
 ## 编译
 
