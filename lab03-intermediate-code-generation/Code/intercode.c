@@ -533,7 +533,7 @@ InterCode translateExp(Node *root, Operand place)
         {
             // todo
             // 通过查表找到ID对应的变量
-            printf("translateExp: ID\n");
+            // printf("translateExp: ID\n");
             Entry leftOperand = findSymbolAll(root->children[0]->children[0]->strVal);
             // 然后对Exp2进行翻译（运算结果储存在临时变量t1中）
             Operand tmp1 = newTemp();
@@ -689,7 +689,7 @@ InterCode translateExp(Node *root, Operand place)
                                      strcmp(root->children[1]->name, "OR") == 0))
     {
         // todo
-        printf("seems that this situation not happen\n");
+        // printf("seems that this situation not happen\n");
         Operand label1 = newLabel();
 
         Operand label2 = newLabel();
@@ -940,7 +940,7 @@ InterCode translateStmt(Node *root)
     else if (strcmp(root->children[0]->name, "IF") == 0 && root->childNum == 5)
     {
         // not this one
-        printf("translateStmt: IF\n");
+        // printf("translateStmt: IF\n");
         Operand label1 = newLabel();
         Operand label2 = newLabel();
         InterCode code1 = translateCond(root->children[2], label1, label2);
@@ -959,7 +959,7 @@ InterCode translateStmt(Node *root)
     }
     else if (strcmp(root->children[0]->name, "IF") == 0 && root->childNum == 7)
     {
-        printf("is this?\n");
+        // printf("is this?\n");
         Operand label1 = newLabel();
         Operand label2 = newLabel();
         Operand label3 = newLabel();
@@ -1068,7 +1068,7 @@ Pay attention to how to implement short-circuit translation.
 InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
 {
     // todo
-    printf("translateCond\n");
+    // printf("translateCond\n");
 
     // get op
     char *op = "no matter";
@@ -1107,7 +1107,7 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     }
     else if (strcmp(op, "NOT") == 0)
     {
-        printf("translateCond: NOT\n");
+        // printf("translateCond: NOT\n");
         return translateCond(root->children[1], labelFalse, labelTrue);
     }
     else if (strcmp(op, "AND") == 0)
@@ -1142,7 +1142,7 @@ InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
     }
     else
     {
-        printf("else\n");
+        // printf("else\n");
         Operand t1 = newTemp();
 
         InterCode code1 = translateExp(root, t1);
