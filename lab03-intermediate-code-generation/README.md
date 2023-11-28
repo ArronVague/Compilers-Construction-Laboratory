@@ -128,7 +128,7 @@ InterCode optimizeMULIR(Operand dest, Operand src1, Operand src2)
         }
 ```
 
-#### 结果
+#### 测试结果
 
 test1.cmm稍作修改
 
@@ -150,26 +150,207 @@ RETURN #0
 
 vn表示n。
 
-### translateCond
+### 短路翻译
+
+在完成条件表达式之前，先完成`translateCond(Node *root, Operand labelTrue, Operand labelFalse)`。实际上就是照抄翻译模式。我的做法是先获取`op`，`root->childNum < 2`时，op不会赋值，就是一个`“no matter”`字符串，下面的所有条件都不会满足，最终执行`else`里面的代码。`root->childNum == 2`的情况，也就是NOT表达式，获取`op`以及翻译时，都要进行特殊处理。
+
+```c
+InterCode translateCond(Node *root, Operand labelTrue, Operand labelFalse)
+{
+    // todo
+
+    // get op
+    char *op = "no matter";
+    if (root->childNum == 2)
+    {
+        op = root->children[0]->name;
+    }
+    else if (root->childNum > 2)
+    {
+        op = root->children[1]->name;
+    }
+
+    if (strcmp(op, "RELOP") == 0)
+    {
+        Operand t1 = newTemp();
+
+        Operand t2 = newTemp();
+
+        InterCode code1 = translateExp(root->children[0], t1);
+
+        InterCode code2 = translateExp(root->children[2], t2);
+
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = IF_GOTO_IR;
+        code3->ops[0] = t1;
+        code3->ops[1] = t2;
+        code3->ops[2] = labelTrue;
+        strcpy(code3->relop, root->children[1]->strVal);
+
+        InterCode code4 = (InterCode)malloc(sizeof(InterCode_));
+        code4->kind = GOTO_IR;
+        code4->ops[0] = labelFalse;
+        insertInterCode(code3, code2);
+        insertInterCode(code4, code2);
+        return code2;
+    }
+    else if (strcmp(op, "NOT") == 0)
+    {
+        return translateCond(root->children[1], labelFalse, labelTrue);
+    }
+    else if (strcmp(op, "AND") == 0)
+    {
+        Operand label1 = newLabel();
+
+        InterCode code1 = translateCond(root->children[0], label1, labelFalse);
+
+        InterCode code2 = translateCond(root->children[2], labelTrue, labelFalse);
+
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = LABEL_IR;
+        code3->ops[0] = label1;
+        insertInterCode(code3, code1);
+        insertInterCode(code2, code1);
+        return code1;
+    }
+    else if (strcmp(op, "OR") == 0)
+    {
+        Operand label1 = newLabel();
+
+        InterCode code1 = translateCond(root->children[0], labelTrue, label1);
+
+        InterCode code2 = translateCond(root->children[2], labelTrue, labelFalse);
+
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = LABEL_IR;
+        code3->ops[0] = label1;
+        insertInterCode(code3, code1);
+        insertInterCode(code2, code1);
+        return code1;
+    }
+    else
+    {
+        Operand t1 = newTemp();
+
+        InterCode code1 = translateExp(root, t1);
+
+        InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
+        code2->kind = IF_GOTO_IR;
+        code2->ops[0] = t1;
+        code2->ops[1] = getValue(0);
+        code2->ops[2] = labelTrue;
+        strcpy(code2->relop, "!=");
+
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = GOTO_IR;
+        code3->ops[0] = labelFalse;
+        insertInterCode(code2, code1);
+        insertInterCode(code3, code1);
+        return code1;
+    }
+}
+```
+
+### 条件表达式
+
+实际上还是照抄翻译模式。注意运用上面完成的`translateCond(Node *root, Operand labelTrue, Operand labelFalse)`。
+
+```c
+    else if (root->childNum >= 2 && (strcmp(root->children[0]->name, "NOT") == 0 ||
+                                     strcmp(root->children[1]->name, "RELOP") == 0 ||
+                                     strcmp(root->children[1]->name, "AND") == 0 ||
+                                     strcmp(root->children[1]->name, "OR") == 0))
+    {
+        // todo
+        Operand label1 = newLabel();
+
+        Operand label2 = newLabel();
+
+        InterCode code0 = (InterCode)malloc(sizeof(InterCode_));
+        code0->kind = ASSIGN_IR;
+        code0->ops[0] = place;
+        code0->ops[1] = getValue(0);
+        code0->ops[2] = NULL;
+
+        InterCode code1 = translateCond(root, label1, label2);
+
+        InterCode code2 = (InterCode)malloc(sizeof(InterCode_));
+        code2->kind = LABEL_IR;
+        code2->ops[0] = label1;
+        code2->ops[1] = NULL;
+        InterCode code3 = (InterCode)malloc(sizeof(InterCode_));
+        code3->kind = ASSIGN_IR;
+        code3->ops[0] = place;
+        code3->ops[1] = getValue(1);
+        code3->ops[2] = NULL;
+
+        InterCode code4 = (InterCode)malloc(sizeof(InterCode_));
+        code4->kind = LABEL_IR;
+        code4->ops[0] = label2;
+        code4->ops[1] = NULL;
+        insertInterCode(code1, code0);
+        insertInterCode(code2, code0);
+        insertInterCode(code3, code0);
+        insertInterCode(code4, code0);
+        return code0;
+    }
+```
 
 由于四个测试用例test1.cmm、test2.cmm、test_o1.cmm、test_o2.cmm中没有条件表达式和短路的代码。因此，自行写了一个测试用例。
 
-观察到基本表达式翻译模式中Exp1 RELOP Exp2及相关部分，code0 = [place := #0]以及code2 = [LABEL label1] + [place := #1]，条件表达式的最终结果都是int类型的0或1，没有隐式转换，因此不能用bool，用int flag效果一样。bool实际上也就是0或1？
+观察到基本表达式翻译模式中Exp1 RELOP Exp2及相关部分，code0 = [place := #0]以及code2 = [LABEL label1] + [place := #1]，条件表达式的最终结果都是`int`类型的0或1，虽然没有`bool`类型，但可以用`int flag`假装`bool`。实际上，一个bit位表示的`bool`变量，也就只有0、1两种状态。
+
+这个测试用例囊括了条件表达式和短路的几乎所有情况。
 
 ```
 int main() {
     int n = 1;
     int flag;
-    flag = (n > 0 && n > 1);
+    flag = !(n > 0 && (n || n == 0));
     return 0;
 }
 ```
 
+#### 测试结果
 
+```
+FUNCTION main :
+vn := #1
+t2 := #0
+t4 := #0
+IF vn > #0 GOTO label5
+GOTO label4
+LABEL label5 :
+t8 := #0
+IF vn != #0 GOTO label6
+GOTO label8
+LABEL label8 :
+IF vn == #0 GOTO label6
+GOTO label7
+LABEL label6 :
+t8 := #1
+LABEL label7 :
+IF t8 != #0 GOTO label3
+GOTO label4
+LABEL label3 :
+t4 := #1
+LABEL label4 :
+IF t4 != #0 GOTO label2
+GOTO label1
+LABEL label1 :
+t2 := #1
+LABEL label2 :
+vflag := t2
+RETURN #0
+```
+
+## 结果输出文件
+
+放在result文件夹下。
 
 ## 编译
 
-在Makefile文件添加了运行命令。
+在Makefile文件添加了命令，对PPT的四个样例以及我自己写的短路条件表达式总共五个样例进行测试。
 
 ```makefile
 # 定义的一些伪目标
@@ -179,6 +360,7 @@ test: parser_
 	./parser ../Test/test2.cmm ../result/test_case2.ir
 	./parser ../Test/test_o1.cmm ../result/test_case_o1.ir
 	./parser ../Test/test_o2.cmm ../result/test_case_o2.ir
+	./parser ../Test/self_test.cmm ../result/self_test.ir 
 ```
 
 ### 编译并测试
