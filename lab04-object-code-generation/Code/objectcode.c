@@ -403,6 +403,10 @@ int handleOp(Operand op, FILE *fp, int load)
     else if (op->kind == GET_ADDR_OP)
     {
         // TODO
+        // ？我觉得不是
+        int reg = getReg(op->opr, fp, load);
+        fprintf(fp, "  la %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
+        return reg;
     }
 }
 
