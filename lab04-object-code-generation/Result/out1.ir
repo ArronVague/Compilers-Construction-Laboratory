@@ -1,0 +1,20 @@
+FUNCTION main :
+va := #0
+vb := #1
+vi := #0
+READ t4
+vn := t4
+LABEL label1 :
+IF vi < vn GOTO label2
+GOTO label3
+LABEL label2 :
+t7 := va + vb
+vc := t7
+WRITE vb
+va := vb
+vb := vc
+t13 := vi + #1
+vi := t13
+GOTO label1
+LABEL label3 :
+RETURN #0
