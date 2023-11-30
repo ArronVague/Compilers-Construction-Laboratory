@@ -285,6 +285,19 @@ int allocateReg(VarDes var, FILE *fp, int load)
     if (i >= 8 && i < 26)
     {
         // TODO
+        // 照抄不存在空闲寄存器的代码
+        regs[i]->var = var;
+        updateInterval(regs[i]);
+        if (load == 1)
+        {
+            // 常量装载到寄存器中
+            if (var->op->kind == CONSTANT_OP)
+                fprintf(fp, "  li %s, %d\n", regs[i]->name, var->op->value);
+            // 将栈中存储的变量的值装载到寄存器中
+            else if (var->op->kind == VARIABLE_OP || var->op->kind == TEMP_VAR_OP)
+                fprintf(fp, "  lw %s, %d($fp)\n", regs[i]->name, -var->offset);
+        }
+        return i;
     }
     // 不存在空闲寄存器
     else if (i == 26)
