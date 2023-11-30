@@ -404,6 +404,7 @@ int handleOp(Operand op, FILE *fp, int load)
     {
         // TODO
         // ？我觉得不是
+        // 暂时没用到
         int reg = getReg(op->opr, fp, load);
         fprintf(fp, "  la %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
         return reg;
@@ -477,6 +478,23 @@ void printObjectCodes(char *name)
         case ASSIGN_IR:
         {
             // TODO
+            Operand left = curr->ops[0];
+            Operand right = curr->ops[1];
+            int regRight = handleOp(right, fp, 1);
+            if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
+            {
+                int regLeft = getReg(left, fp, 0);
+                fprintf(fp, "  move %s, %s\n", regs[regLeft]->name, regs[regRight]->name);
+                spillReg(regs[regLeft], fp);
+            }
+            else if (left->kind == GET_VAL_OP)
+            {
+                int regLeft1 = getReg(left->opr, fp, 0);
+                fprintf(fp, "  move %s, %s\n", regs[regLeft1]->name, regs[regRight]->name);
+                int regLeft2 = getReg(left->opr, fp, 1);
+                fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
+            }
+            break;
         }
         case PLUS_IR:
         {
