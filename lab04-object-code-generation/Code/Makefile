@@ -45,9 +45,9 @@ parser_:
 # 定义的一些伪目标
 .PHONY: clean test
 test: parser_
-	# ./parser ../Test/self_test.cmm out.s out.ir
+	./parser ../Test/self_test.cmm ../Result/self_out.s ../Result/self_out.ir
 	./parser ../Test/test1.cmm ../Result/out1.s ../Result/out1.ir
-	# ./parser ../Test/test2.cmm ../Result/out2.s ../Result/out2.ir
+	./parser ../Test/test2.cmm ../Result/out2.s ../Result/out2.ir
 clean:
 	rm -f parser lex.yy.c syntax.tab.c syntax.tab.h syntax.output
 	rm -f $(OBJS) $(OBJS:.o=.d)
