@@ -24,15 +24,32 @@ main:
   addi $sp, $sp, -4
   sw $fp, 0($sp)
   move $fp, $sp
-  addi $sp, $sp, -12
+  addi $sp, $sp, -20
+  li $t0, 2
+  move $t1, $t0
+  sw $t1, -4($fp)
 
-  lw $t0, -8($fp)
+  lw $t2, -12($fp)
 
-  add $t1, $t0, $zero
-  sw $t1, -12($fp)
-  li $t2, 1
-  lw $t3, -12($fp)
-  sw $t2, 0($t3)
+  add $t3, $t2, $zero
+  sw $t3, -16($fp)
+  li $t4, 1
+  lw $t5, -16($fp)
+  sw $t4, 0($t5)
+
+  lw $t6, -12($fp)
+
+  li $t7, 4
+  add $s0, $t6, $t7
+  sw $s0, -20($fp)
+  lw $s1, -20($fp)
+  lw $s1, 0($s1)
+  move $a0, $s1
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal write
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
   move $v0, $zero
   move $sp, $fp
   lw $fp, 0($sp)

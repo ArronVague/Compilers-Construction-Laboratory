@@ -403,11 +403,11 @@ int handleOp(Operand op, FILE *fp, int load)
     else if (op->kind == GET_ADDR_OP)
     {
         // TODO
-        int reg = getReg(op->opr, fp, load); // 获取地址操作数的寄存器
-
-        // 将地址加载到寄存器
-        // fprintf(fp, "  la %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
-
+        fprintf(fp, "\n");
+        int reg = getReg(op->opr, fp, load);
+        // fprintf(fp, "  lw %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
+        printf("%s\n", op->opr->name);
+        fprintf(fp, "\n");
         return reg;
     }
 }
