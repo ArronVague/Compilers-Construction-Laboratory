@@ -318,73 +318,73 @@ label2:
   li $s7, 4
   mul $s4, $s6, $s7
   sw $s4, -216($fp)
-  la $zero, 
-  lw $s7, -216($fp)
-  add $t9, $zero, $s7
-  sw $t9, -220($fp)
-  lw $t8, -28($fp)
-  lw $t0, -220($fp)
-  sw $t8, 0($t0)
-  lw $t2, -28($fp)
-  li $t4, 1
-  add $s1, $t2, $t4
-  sw $s1, -224($fp)
-  lw $t4, -224($fp)
-  move $s5, $t4
-  sw $s5, -28($fp)
-  lw $t1, -112($fp)
-  li $t3, 1
-  add $t5, $t1, $t3
-  sw $t5, -228($fp)
-  lw $t3, -228($fp)
-  move $s0, $t3
-  sw $s0, -112($fp)
+  lw $s7, -164($fp)
+  lw $t9, -216($fp)
+  add $t8, $s7, $t9
+  sw $t8, -220($fp)
+  lw $t0, -28($fp)
+  lw $t2, -220($fp)
+  sw $t0, 0($t2)
+  lw $t4, -28($fp)
+  li $s1, 1
+  add $s5, $t4, $s1
+  sw $s5, -224($fp)
+  lw $s1, -224($fp)
+  move $t1, $s1
+  sw $t1, -28($fp)
+  lw $t3, -112($fp)
+  li $t5, 1
+  add $s0, $t3, $t5
+  sw $s0, -228($fp)
+  lw $t5, -228($fp)
+  move $t6, $t5
+  sw $t6, -112($fp)
   j label1
 label3:
-  move $t6, $zero
-  sw $t6, -112($fp)
+  move $t7, $zero
+  sw $t7, -112($fp)
 label4:
-  lw $t7, -112($fp)
-  li $s2, 100
-  blt $t7, $s2, label5
+  lw $s2, -112($fp)
+  li $s3, 100
+  blt $s2, $s3, label5
   j label6
 label5:
-  lw $s2, -112($fp)
-  move $a0, $s2
-  lw $s3, -124($fp)
-  move $a1, $s3
+  lw $s3, -112($fp)
+  move $a0, $s3
+  lw $s6, -124($fp)
+  move $a1, $s6
   addi $sp, $sp, -4
   sw $ra, 0($sp)
   jal mod
   lw $ra, 0($sp)
   addi $sp, $sp, 4
-  move $s6, $v0
-  sw $s6, -232($fp)
-  lw $s4, -232($fp)
-  li $s7, 4
-  mul $t9, $s4, $s7
-  sw $t9, -236($fp)
-  la $zero, 
-  lw $s7, -236($fp)
-  add $t8, $zero, $s7
-  sw $t8, -240($fp)
-  lw $t0, -28($fp)
-  lw $t2, -240($fp)
-  sw $t0, 0($t2)
+  move $s4, $v0
+  sw $s4, -232($fp)
+  lw $s7, -232($fp)
+  li $t9, 4
+  mul $t8, $s7, $t9
+  sw $t8, -236($fp)
+  lw $t9, -204($fp)
+  lw $t0, -236($fp)
+  add $t2, $t9, $t0
+  sw $t2, -240($fp)
+  lw $t4, -28($fp)
+  lw $s5, -240($fp)
+  sw $t4, 0($s5)
   lw $s1, -28($fp)
-  li $t4, 1
-  add $s5, $s1, $t4
-  sw $s5, -244($fp)
-  lw $t4, -244($fp)
-  move $t1, $t4
-  sw $t1, -28($fp)
+  li $t1, 1
+  add $t3, $s1, $t1
+  sw $t3, -244($fp)
+  lw $t1, -244($fp)
+  move $s0, $t1
+  sw $s0, -28($fp)
   lw $t5, -112($fp)
-  li $t3, 1
-  add $s0, $t5, $t3
-  sw $s0, -248($fp)
-  lw $t3, -248($fp)
-  move $t6, $t3
-  sw $t6, -112($fp)
+  li $t6, 1
+  add $t7, $t5, $t6
+  sw $t7, -248($fp)
+  lw $t6, -248($fp)
+  move $s2, $t6
+  sw $s2, -112($fp)
   j label4
 label6:
   move $v0, $zero
