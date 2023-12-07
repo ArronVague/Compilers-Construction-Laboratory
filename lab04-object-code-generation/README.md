@@ -72,3 +72,59 @@ else if (i == 26)
 
 注意：getReg是不处理地址操作数的
 
+加法指令模板
+
+sw source, offset(base)是将source存储到base偏移offset后的内存地址里。
+
+除法照抄
+
+```c
+        case PLUS_IR:
+        {
+            Operand left = curr->ops[0];
+            Operand right1 = curr->ops[1];
+            Operand right2 = curr->ops[2];
+            int regRight1 = handleOp(right1, fp, 1);
+            int regRight2 = handleOp(right2, fp, 1);
+            if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
+            {
+                int regLeft = getReg(left, fp, 0);
+                fprintf(fp, "  add %s, %s, %s\n", regs[regLeft]->name, regs[regRight1]->name, regs[regRight2]->name);
+                spillReg(regs[regLeft], fp);
+            }
+            else if (left->kind == GET_VAL_OP)
+            {
+                int regLeft1 = getReg(left->opr, fp, 0);
+                fprintf(fp, "  add %s, %s, %s\n", regs[regLeft1]->name, regs[regRight1]->name, regs[regRight2]->name);
+                int regLeft2 = getReg(left->opr, fp, 1);
+                fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
+            }
+            break;
+        }
+```
+
+```c
+        case MUL_IR:
+        {
+            Operand left = curr->ops[0];
+            Operand right1 = curr->ops[1];
+            Operand right2 = curr->ops[2];
+            int regRight1 = handleOp(right1, fp, 1);
+            int regRight2 = handleOp(right2, fp, 1);
+            if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
+            {
+                int regLeft = getReg(left, fp, 0);
+                fprintf(fp, "  mul %s, %s, %s\n", regs[regLeft]->name, regs[regRight1]->name, regs[regRight2]->name);
+                spillReg(regs[regLeft], fp);
+            }
+            else if (left->kind == GET_VAL_OP)
+            {
+                int regLeft1 = getReg(left->opr, fp, 0);
+                fprintf(fp, "  mul %s, %s, %s\n", regs[regLeft1]->name, regs[regRight1]->name, regs[regRight2]->name);
+                int regLeft2 = getReg(left->opr, fp, 1);
+                fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
+            }
+            break;
+        }
+```
+
