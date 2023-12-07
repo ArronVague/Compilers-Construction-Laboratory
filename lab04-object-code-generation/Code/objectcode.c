@@ -405,8 +405,15 @@ int handleOp(Operand op, FILE *fp, int load)
         // TODO
         // ？我觉得不是
         // 暂时没用到
+        // int reg = getReg(op->opr, fp, load);
+        // fprintf(fp, "  la %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
+        // return reg;
+
+        // 获取存储地址
         int reg = getReg(op->opr, fp, load);
-        fprintf(fp, "  la %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
+        // 通过间接寻址获取值
+        int regValue = getReg(op->opr->opr, fp, load);
+        fprintf(fp, "  lw %s, 0(%s)\n", regs[reg]->name, regs[regValue]->name);
         return reg;
     }
 }
