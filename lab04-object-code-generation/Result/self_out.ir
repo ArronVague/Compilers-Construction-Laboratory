@@ -1,0 +1,87 @@
+FUNCTION mod :
+PARAM va
+PARAM vb
+t6 := va / vb
+t3 := t6 * vb
+t1 := va - t3
+RETURN t1
+FUNCTION do_work :
+PARAM vn
+ARG #5
+ARG vn
+t9 := CALL mod
+vn := t9
+RETURN vn
+FUNCTION main :
+vt1 := #2
+vt2 := #5
+vt3 := #10
+t21 := vt2 * vt3
+t17 := #3 * t21
+t16 := t17 - #20
+vi := t16
+t33 := vt1 * vt2
+t41 := vt2 * vt3
+t37 := vt1 * t41
+t36 := t37 / #32
+t30 := t33 * t36
+t27 := #42 - t30
+t26 := t27 + #100
+vj := t26
+t67 := vt1 * vt2
+t64 := t67 * #3
+t63 := #0 - t64
+t53 := #50 - t63
+t70 := vt1 * vt2
+t51 := t53 - t70
+t73 := vt1 * vt2
+t49 := t51 - t73
+t47 := t49 + #3
+t45 := t47 + #2
+t44 := t45 + #1
+vk := t44
+vcnt := #0
+vsum := #0
+t78 := vt1 * vt2
+vlen := t78
+DEC varray 40
+DEC vbrray 40
+WRITE vi
+WRITE vj
+WRITE vk
+LABEL label1 :
+IF vcnt < vk GOTO label2
+GOTO label3
+LABEL label2 :
+t86 := vsum + #1
+vsum := t86
+ARG vlen
+ARG vcnt
+t90 := CALL mod
+t91 := t90 * #4
+t94 := &varray + t91
+*t94 := vi
+t96 := vi + #1
+vi := t96
+t99 := vcnt + #1
+vcnt := t99
+GOTO label1
+LABEL label3 :
+vcnt := #0
+LABEL label4 :
+IF vcnt < #100 GOTO label5
+GOTO label6
+LABEL label5 :
+ARG vlen
+ARG vcnt
+t106 := CALL mod
+t107 := t106 * #4
+t110 := &vbrray + t107
+*t110 := vi
+t112 := vi + #1
+vi := t112
+t115 := vcnt + #1
+vcnt := t115
+GOTO label4
+LABEL label6 :
+RETURN #0
