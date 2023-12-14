@@ -4,50 +4,46 @@ PARAM vb
 t6 := va / vb
 t3 := t6 * vb
 t1 := va - t3
-WRITE t1
-t14 := va / vb
-t11 := t14 * vb
-t9 := va - t11
-RETURN t9
+RETURN t1
 FUNCTION do_work :
 PARAM vn
 ARG #5
 ARG vn
-t17 := CALL mod
-vn := t17
+t9 := CALL mod
+vn := t9
 RETURN vn
 FUNCTION main :
 vt1 := #2
 vt2 := #5
 vt3 := #10
-t29 := vt2 * vt3
-t25 := #3 * t29
-t24 := t25 - #20
-vi := t24
-t41 := vt1 * vt2
-t49 := vt2 * vt3
-t45 := vt1 * t49
-t44 := t45 / #32
-t38 := t41 * t44
-t35 := #42 - t38
-t34 := t35 + #100
-vj := t34
-t75 := vt1 * vt2
-t72 := t75 * #3
-t71 := #0 - t72
-t61 := #50 - t71
-t78 := vt1 * vt2
-t59 := t61 - t78
-t81 := vt1 * vt2
-t57 := t59 - t81
-t55 := t57 + #3
-t53 := t55 + #2
-t52 := t53 + #1
-vk := t52
+t21 := vt2 * vt3
+t17 := #3 * t21
+t16 := t17 - #20
+vi := t16
+t33 := vt1 * vt2
+t41 := vt2 * vt3
+t37 := vt1 * t41
+t36 := t37 / #32
+t30 := t33 * t36
+t27 := #42 - t30
+t26 := t27 + #100
+vj := t26
+t67 := vt1 * vt2
+t64 := t67 * #3
+t63 := #0 - t64
+t53 := #50 - t63
+t70 := vt1 * vt2
+t51 := t53 - t70
+t73 := vt1 * vt2
+t49 := t51 - t73
+t47 := t49 + #3
+t45 := t47 + #2
+t44 := t45 + #1
+vk := t44
 vcnt := #0
 vsum := #0
-t86 := vt1 * vt2
-vlen := t86
+t78 := vt1 * vt2
+vlen := t78
 DEC varray 40
 DEC vbrray 40
 WRITE vi
@@ -57,24 +53,18 @@ LABEL label1 :
 IF vcnt < vk GOTO label2
 GOTO label3
 LABEL label2 :
-t94 := vsum + #1
-vsum := t94
-WRITE vcnt
-WRITE vlen
+t86 := vsum + #1
+vsum := t86
 ARG vlen
 ARG vcnt
-t99 := CALL mod
-WRITE t99
-ARG vlen
-ARG vcnt
-t103 := CALL mod
-t104 := t103 * #4
-t107 := &varray + t104
-*t107 := vi
-t109 := vi + #1
-vi := t109
-t112 := vcnt + #1
-vcnt := t112
+t90 := CALL mod
+t91 := t90 * #4
+t94 := &varray + t91
+*t94 := vi
+t96 := vi + #1
+vi := t96
+t99 := vcnt + #1
+vcnt := t99
 GOTO label1
 LABEL label3 :
 vcnt := #0
@@ -84,14 +74,14 @@ GOTO label6
 LABEL label5 :
 ARG vlen
 ARG vcnt
-t119 := CALL mod
-t120 := t119 * #4
-t123 := &vbrray + t120
-*t123 := vi
-t125 := vi + #1
-vi := t125
-t128 := vcnt + #1
-vcnt := t128
+t106 := CALL mod
+t107 := t106 * #4
+t110 := &vbrray + t107
+*t110 := vi
+t112 := vi + #1
+vi := t112
+t115 := vcnt + #1
+vcnt := t115
 GOTO label4
 LABEL label6 :
 RETURN #0

@@ -296,6 +296,10 @@ int allocateReg(VarDes var, FILE *fp, int load)
             // 将栈中存储的变量的值装载到寄存器中
             else if (var->op->kind == VARIABLE_OP || var->op->kind == TEMP_VAR_OP)
                 fprintf(fp, "  lw %s, %d($fp)\n", regs[i]->name, -var->offset);
+            // else
+            // {
+            //     fprintf(fp, "  la %s, %d($fp)\n", regs[i]->name, -var->offset);
+            // }
         }
         return i;
     }
@@ -336,6 +340,10 @@ int allocateReg(VarDes var, FILE *fp, int load)
             // 将栈中存储的变量的值装载到寄存器中
             else if (var->op->kind == VARIABLE_OP || var->op->kind == TEMP_VAR_OP)
                 fprintf(fp, "  lw %s, %d($fp)\n", regs[i]->name, -var->offset);
+            // else
+            // {
+            //     fprintf(fp, "  la %s, %d($fp)\n", regs[i]->name, -var->offset);
+            // }
         }
         return i;
     }
@@ -407,6 +415,11 @@ int handleOp(Operand op, FILE *fp, int load)
         // fprintf(fp, "\n  lw %s, %d($fp)\n\n", regs[reg]->name, -8);
         // return reg;
         // fprintf(fp, "\n %s\n\n", op->opr->name);
+        fprintf(fp, "\n");
+        int reg = getReg(op->opr, fp, 0);
+        fprintf(fp, "  la %s, %d($fp)\n", regs[reg]->name, -8);
+        // fprintf(fp, "  la %s, %s\n", regs[reg]->name, op->opr->name);
+        return reg;
     }
 }
 
