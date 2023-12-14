@@ -4,9 +4,9 @@
 
 ### 1）在存在空闲寄存器的情况下，为变量描述符分配寄存器
 
-参考不存在空闲寄存器的情况：该情况下，程序会尝试找一个free并且存放常量的寄存器。如果找到了，那么将该寄存器分配给变量描述符；如果没找到，接着寻找未被使用时间interval最大的寄存器，将其分配给变量描述符。
+参考**不存在空闲寄存器**的情况：该情况下，程序会尝试找一个free并且存放常量的寄存器。如果找到了，那么将该寄存器分配给变量描述符；如果没找到，接着寻找未被使用时间`interval`最大的寄存器，将其分配给变量描述符。
 
-而存在空闲寄存器的情况下，不需要替换寄存器。直接将空闲寄存器分配给变量描述符，模仿不存在空闲寄存器情况下的后半部分的分配代码。
+而**存在空闲寄存器**的情况下，不需要替换寄存器。直接将空闲寄存器分配给变量描述符，模仿**不存在空闲寄存器**情况下的后半部分的分配代码。
 
 ```c
 /*
@@ -79,9 +79,35 @@ int allocateReg(VarDes var, FILE *fp, int load)
 
 不会。其实必做的两个样例没有用到地址操作数。
 
+首先获取空闲寄存器，但不要装载，也不要用`getReg`函数中变量描述符的偏移量。将`getReg`的第三个参数`load`设置为0，获取到空闲寄存器后，将相对于帧指针（$fp）的偏移量为-8的地址加载到该寄存器中。
+
+至于为什么偏移量是-8，我也不知道。 :innocent: （感觉全部的工作量都在这里，也不知道对不对）
+
+```c
+// 根据操作数的类型完成装载
+int handleOp(Operand op, FILE *fp, int load)
+{
+    if (op->kind == VARIABLE_OP || op->kind == TEMP_VAR_OP || op->kind == CONSTANT_OP)
+        return getReg(op, fp, load);
+    else if (op->kind == GET_VAL_OP)
+    {
+        int reg = getReg(op->opr, fp, load);
+        fprintf(fp, "  lw %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
+        return reg;
+    }
+    else if (op->kind == GET_ADDR_OP)
+    {
+        // TODO
+        int reg = getReg(op->opr, fp, 0);
+        fprintf(fp, "  la %s, %d($fp)\n", regs[reg]->name, -8);
+        return reg;
+    }
+}
+```
+
 ### 3）ASSIGN_IR
 
-参考PLUS_IR的代码，赋值指令与加法指令的区别就在于：赋值指令的右操作数只有一个，并且使用move指令替换add指令。
+参考`PLUS_IR`的代码，赋值指令与加法指令的区别就在于：赋值指令的右操作数只有一个。使用`move`指令替换`add`指令。
 
 ```c
         case ASSIGN_IR:
@@ -109,7 +135,7 @@ int allocateReg(VarDes var, FILE *fp, int load)
 
 ### 4）SUB_IR
 
-参考PLUS_IR的代码，将add指令替换成sub指令。
+参考`PLUS_IR`的代码，将`add`指令替换成`sub`指令。
 
 ```c
         case SUB_IR:
@@ -139,7 +165,7 @@ int allocateReg(VarDes var, FILE *fp, int load)
 
 ### 5）DIV_IR
 
-参考MUL_IR的代码，将mul指令替换成div指令。
+参考`MUL_IR`的代码，将`mul`指令替换成`div`指令。
 
 ```c
         case DIV_IR:
@@ -183,14 +209,61 @@ make test
 
 ```makefile
 spim-test:
+	@echo "Test test1.cmm"
 	echo "7" | spim -file ../Result/out1.s
+	@echo "----------------------------------------"
+	@echo "Test test2.cmm"
 	echo "7" | spim -file ../Result/out2.s
+	@echo "----------------------------------------"
+	@echo "Test self_test.cmm"
+	spim -file ../Result/self_out.s
 ```
 
-同样地，在Code文件夹下执行，批量测试输入为7时，两个样例的输出结果。
+同样地，在Code文件夹下执行，批量测试输入为7时，两个必做样例的输出结果，以及一个自测试样例的输出结果。
 
 ```bash
 make spim-test
+```
+
+## 结果
+
+两个必做样例的输入均为7。显示其它数字是因为没有对齐，实际上是输出。
+
+```
+Test test1.cmm
+echo "7" | spim -file ../Result/out1.s
+SPIM Version 8.0 of January 8, 2010
+Copyright 1990-2010, James R. Larus.
+All Rights Reserved.
+See the file README for a full copyright notice.
+Loaded: /usr/lib/spim/exceptions.s
+Enter an integer:1
+1
+2
+3
+5
+8
+13
+----------------------------------------
+Test test2.cmm
+echo "7" | spim -file ../Result/out2.s
+SPIM Version 8.0 of January 8, 2010
+Copyright 1990-2010, James R. Larus.
+All Rights Reserved.
+See the file README for a full copyright notice.
+Loaded: /usr/lib/spim/exceptions.s
+Enter an integer:5040
+----------------------------------------
+Test self_test.cmm
+spim -file ../Result/self_out.s
+SPIM Version 8.0 of January 8, 2010
+Copyright 1990-2010, James R. Larus.
+All Rights Reserved.
+See the file README for a full copyright notice.
+Loaded: /usr/lib/spim/exceptions.s
+130
+112
+66
 ```
 
 
