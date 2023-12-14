@@ -1,9 +1,0 @@
-FUNCTION main :
-DEC varray 8
-t4 := &varray + #0
-*t4 := #1
-t9 := &varray + #4
-*t9 := #2
-t15 := &varray + #4
-WRITE *t15
-RETURN #0
