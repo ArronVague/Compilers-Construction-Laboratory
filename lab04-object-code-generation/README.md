@@ -1,31 +1,44 @@
-free为1是表示寄存器空闲。
+# Lab 4 - 目标代码生成
+
+## 实现的功能
+
+### 1）在存在空闲寄存器的情况下，为变量描述符分配寄存器
+
+参考不存在空闲寄存器的情况：该情况下，程序会尝试找一个free并且存放常量的寄存器。如果找到了，那么将该寄存器分配给变量描述符；如果没找到，接着寻找未被使用时间interval最大的寄存器，将其分配给变量描述符。
+
+而存在空闲寄存器的情况下，不需要替换寄存器。直接将空闲寄存器分配给变量描述符，模仿不存在空闲寄存器情况下的后半部分的分配代码。
 
 ```c
-// 寄存器描述符
-struct RegDes_d {
-    int free;   // 标记是否可用，用来协调寄存器分配的互不抢占
-    int interval;   // 距上次访问的间隔，用于寄存器选择
-    char name[6];   // 寄存器别名
-    VarDes var; // 存储在该寄存器中的变量的描述符
-};
-```
-
-会将作为参数传入的一个寄存器的interval设置为0，其他的寄存器+1，表示未使用的时间变长了。
-
-```c
-// 更新寄存器的使用间隔
-void updateInterval(RegDes reg)
+/*
+ * 为变量描述符分配寄存器, load用于指示是否需要装载寄存器，
+ * 形如 x = y op z 的表达式中，为x分配寄存器就不需要装载，而为y和z分配时都需要
+ */
+int allocateReg(VarDes var, FILE *fp, int load)
 {
-    for (int i = 8; i < 26; i++)
-        regs[i]->interval++;
-    reg->interval = 0;
-}
-```
-
-分配寄存器时，不存在空闲寄存器的做法。
-
-```c
-else if (i == 26)
+    // 查找是否有空闲寄存器
+    int i = 8;
+    for (; i < 26; i++)
+        if (regs[i]->var == NULL)
+            break;
+    // 存在空闲寄存器
+    if (i >= 8 && i < 26)
+    {
+        // TODO
+        regs[i]->var = var;
+        updateInterval(regs[i]);
+        if (load == 1)
+        {
+            // 常量装载到寄存器中
+            if (var->op->kind == CONSTANT_OP)
+                fprintf(fp, "  li %s, %d\n", regs[i]->name, var->op->value);
+            // 将栈中存储的变量的值装载到寄存器中
+            else if (var->op->kind == VARIABLE_OP || var->op->kind == TEMP_VAR_OP)
+                fprintf(fp, "  lw %s, %d($fp)\n", regs[i]->name, -var->offset);
+        }
+        return i;
+    }
+    // 不存在空闲寄存器
+    else if (i == 26)
     {
         // 最长时间未使用算法
         // 先尝试找到一个free并且存放常量的寄存器
@@ -45,11 +58,6 @@ else if (i == 26)
                 }
             i = res;
         }
-        // 这里是个很隐蔽的错误，因为对编译器的翻译而言，寄存器中的变量变化是线性的
-        // 而对于实际的机器执行而言，寄存器中的变量变化存在很多可能的分支，编译器仅能确保在一条语句的翻译过程中的变量正确
-        // 所以这里并不能保存寄存器中的旧值，因为我们不知道在实际运行过程中到达这条语句的该寄存器中存放的是否还是那个变量
-        // spillReg(regs[i], fp);
-        // regs[i]->var->regNo = -1;
         regs[i]->var = var;
         updateInterval(regs[i]);
         // var->regNo = i;
@@ -64,23 +72,49 @@ else if (i == 26)
         }
         return i;
     }
+}
 ```
 
-至今没搞懂handleOp的意义，对地址操作数，需要将寄存器存的地址指向的操作数存到寄存器？
+### 2）地址操作数的装载
 
-将实际的操作数存入寄存器。
+不会。其实必做的两个样例没有用到地址操作数。
 
-注意：getReg是不处理地址操作数的
+### 3）ASSIGN_IR
 
-加法指令模板
-
-sw source, offset(base)是将source存储到base偏移offset后的内存地址里。
-
-除法照抄
+参考PLUS_IR的代码，赋值指令与加法指令的区别就在于：赋值指令的右操作数只有一个，并且使用move指令替换add指令。
 
 ```c
-        case PLUS_IR:
+        case ASSIGN_IR:
         {
+            // TODO
+            Operand left = curr->ops[0];
+            Operand right = curr->ops[1];
+            int regRight = handleOp(right, fp, 1);
+            if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
+            {
+                int regLeft = getReg(left, fp, 0);
+                fprintf(fp, "  move %s, %s\n", regs[regLeft]->name, regs[regRight]->name);
+                spillReg(regs[regLeft], fp);
+            }
+            else if (left->kind == GET_VAL_OP)
+            {
+                int regLeft1 = getReg(left->opr, fp, 0);
+                fprintf(fp, "  move %s, %s\n", regs[regLeft1]->name, regs[regRight]->name);
+                int regLeft2 = getReg(left->opr, fp, 1);
+                fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
+            }
+            break;
+        }
+```
+
+### 4）SUB_IR
+
+参考PLUS_IR的代码，将add指令替换成sub指令。
+
+```c
+        case SUB_IR:
+        {
+            // TODO
             Operand left = curr->ops[0];
             Operand right1 = curr->ops[1];
             Operand right2 = curr->ops[2];
@@ -89,13 +123,13 @@ sw source, offset(base)是将source存储到base偏移offset后的内存地址�
             if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
             {
                 int regLeft = getReg(left, fp, 0);
-                fprintf(fp, "  add %s, %s, %s\n", regs[regLeft]->name, regs[regRight1]->name, regs[regRight2]->name);
+                fprintf(fp, "  sub %s, %s, %s\n", regs[regLeft]->name, regs[regRight1]->name, regs[regRight2]->name);
                 spillReg(regs[regLeft], fp);
             }
             else if (left->kind == GET_VAL_OP)
             {
                 int regLeft1 = getReg(left->opr, fp, 0);
-                fprintf(fp, "  add %s, %s, %s\n", regs[regLeft1]->name, regs[regRight1]->name, regs[regRight2]->name);
+                fprintf(fp, "  sub %s, %s, %s\n", regs[regLeft1]->name, regs[regRight1]->name, regs[regRight2]->name);
                 int regLeft2 = getReg(left->opr, fp, 1);
                 fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
             }
@@ -103,9 +137,14 @@ sw source, offset(base)是将source存储到base偏移offset后的内存地址�
         }
 ```
 
+### 5）DIV_IR
+
+参考MUL_IR的代码，将mul指令替换成div指令。
+
 ```c
-        case MUL_IR:
+        case DIV_IR:
         {
+            // TODO
             Operand left = curr->ops[0];
             Operand right1 = curr->ops[1];
             Operand right2 = curr->ops[2];
@@ -114,17 +153,45 @@ sw source, offset(base)是将source存储到base偏移offset后的内存地址�
             if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
             {
                 int regLeft = getReg(left, fp, 0);
-                fprintf(fp, "  mul %s, %s, %s\n", regs[regLeft]->name, regs[regRight1]->name, regs[regRight2]->name);
+                fprintf(fp, "  div %s, %s\n", regs[regRight1]->name, regs[regRight2]->name);
                 spillReg(regs[regLeft], fp);
             }
             else if (left->kind == GET_VAL_OP)
             {
                 int regLeft1 = getReg(left->opr, fp, 0);
-                fprintf(fp, "  mul %s, %s, %s\n", regs[regLeft1]->name, regs[regRight1]->name, regs[regRight2]->name);
+                fprintf(fp, "  div %s, %s\n", regs[regRight1]->name, regs[regRight2]->name);
                 int regLeft2 = getReg(left->opr, fp, 1);
                 fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
             }
             break;
         }
 ```
+
+## 如何编译
+
+#### 编译
+
+在Makefile所在文件夹下，即Code文件夹下执行，在Result文件夹中生成.s汇编代码文件。
+
+```bash
+make test
+```
+
+#### 测试
+
+同时，添加了批量测试的命令。
+
+```makefile
+spim-test:
+	echo "7" | spim -file ../Result/out1.s
+	echo "7" | spim -file ../Result/out2.s
+```
+
+同样地，在Code文件夹下执行，批量测试输入为7时，两个样例的输出结果。
+
+```bash
+make spim-test
+```
+
+
 
