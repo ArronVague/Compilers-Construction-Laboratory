@@ -25,22 +25,19 @@ main:
   sw $fp, 0($sp)
   move $fp, $sp
   addi $sp, $sp, -20
-  li $t0, 2
-  move $t1, $t0
-  sw $t1, -4($fp)
-
+  add $t0, $a1, $zero
+  sw $t0, -12($fp)
+  li $t1, 1
   lw $t2, -12($fp)
-
-  add $t3, $t2, $zero
-  sw $t3, -16($fp)
-  li $t4, 1
-  lw $t5, -16($fp)
-  sw $t4, 0($t5)
-
-  lw $t6, -12($fp)
-
+  sw $t1, 0($t2)
+  li $t3, 4
+  add $t4, $a1, $t3
+  sw $t4, -16($fp)
+  li $t5, 2
+  lw $t6, -16($fp)
+  sw $t5, 0($t6)
   li $t7, 4
-  add $s0, $t6, $t7
+  add $s0, $a1, $t7
   sw $s0, -20($fp)
   lw $s1, -20($fp)
   lw $s1, 0($s1)

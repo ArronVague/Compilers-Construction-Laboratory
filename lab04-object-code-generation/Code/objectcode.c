@@ -403,12 +403,10 @@ int handleOp(Operand op, FILE *fp, int load)
     else if (op->kind == GET_ADDR_OP)
     {
         // TODO
-        fprintf(fp, "\n");
-        int reg = getReg(op->opr, fp, load);
-        // fprintf(fp, "  lw %s, 0(%s)\n", regs[reg]->name, regs[reg]->name);
-        printf("%s\n", op->opr->name);
-        fprintf(fp, "\n");
-        return reg;
+        // int reg = getReg(op->opr, fp, load);
+        // fprintf(fp, "\n  lw %s, %d($fp)\n\n", regs[reg]->name, -8);
+        // return reg;
+        // fprintf(fp, "\n %s\n\n", op->opr->name);
     }
 }
 

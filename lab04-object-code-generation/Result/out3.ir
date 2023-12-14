@@ -1,8 +1,9 @@
 FUNCTION main :
-vn := #2
 DEC varray 8
-t5 := &varray + #0
-*t5 := #1
-t11 := &varray + #4
-WRITE *t11
+t4 := &varray + #0
+*t4 := #1
+t9 := &varray + #4
+*t9 := #2
+t15 := &varray + #4
+WRITE *t15
 RETURN #0

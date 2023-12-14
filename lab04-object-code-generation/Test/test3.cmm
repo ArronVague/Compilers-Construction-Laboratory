@@ -1,7 +1,7 @@
 int main() {
-  int n = 2;
   int array[2];
   array[0] = 1;
+  array[1] = 2;
   write(array[1]);
   return 0;
 }
