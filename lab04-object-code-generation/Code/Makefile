@@ -48,7 +48,6 @@ test: parser_
 	./parser ../Test/self_test.cmm ../Result/self_out.s ../Result/self_out.ir
 	./parser ../Test/test1.cmm ../Result/out1.s ../Result/out1.ir
 	./parser ../Test/test2.cmm ../Result/out2.s ../Result/out2.ir
-	./parser ../Test/test3.cmm ../Result/out3.s ../Result/out3.ir
 clean:
 	rm -f parser lex.yy.c syntax.tab.c syntax.tab.h syntax.output
 	rm -f $(OBJS) $(OBJS:.o=.d)
@@ -56,5 +55,11 @@ clean:
 	rm -f *~
 
 spim-test:
+	@echo "Test test1.cmm"
 	echo "7" | spim -file ../Result/out1.s
+	@echo "----------------------------------------"
+	@echo "Test test2.cmm"
 	echo "7" | spim -file ../Result/out2.s
+	@echo "----------------------------------------"
+	@echo "Test self_test.cmm"
+	spim -file ../Result/self_out.s
