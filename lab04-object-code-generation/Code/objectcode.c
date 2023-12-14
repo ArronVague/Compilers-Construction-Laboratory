@@ -573,13 +573,13 @@ void printObjectCodes(char *name)
             if (left->kind == VARIABLE_OP || left->kind == TEMP_VAR_OP)
             {
                 int regLeft = getReg(left, fp, 0);
-                fprintf(fp, "  div %s, %s\n", regs[regRight1]->name, regs[regRight2]->name);
+                fprintf(fp, "  div %s, %s, %s\n", regs[regLeft]->name, regs[regRight1]->name, regs[regRight2]->name);
                 spillReg(regs[regLeft], fp);
             }
             else if (left->kind == GET_VAL_OP)
             {
                 int regLeft1 = getReg(left->opr, fp, 0);
-                fprintf(fp, "  div %s, %s\n", regs[regRight1]->name, regs[regRight2]->name);
+                fprintf(fp, "  div %s, %s, %s\n", regs[regLeft1]->name, regs[regRight1]->name, regs[regRight2]->name);
                 int regLeft2 = getReg(left->opr, fp, 1);
                 fprintf(fp, "  sw %s, 0(%s)\n", regs[regLeft1]->name, regs[regLeft2]->name);
             }
