@@ -406,7 +406,7 @@ int handleOp(Operand op, FILE *fp, int load)
         // int reg = getReg(op->opr, fp, 0);
         // fprintf(fp, "  la %s, %d($fp)\n", regs[reg]->name, -8);
         // return reg;
-        int reg = getReg(op->opr, fp, load);
+        int reg = getReg(op->opr, fp, 0);
         FrameDes frame = findCurrFrame();
         VarDes var = createVarDes(op->opr, frame);
         fprintf(fp, "  addi %s, $fp, %d\n", regs[reg]->name, -var->offset);
