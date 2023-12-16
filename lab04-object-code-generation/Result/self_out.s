@@ -318,7 +318,7 @@ label2:
   li $s7, 4
   mul $s4, $s6, $s7
   sw $s4, -216($fp)
-  la $s7, -8($fp)
+  addi $s7, $fp, -164
   lw $t9, -216($fp)
   add $t8, $s7, $t9
   sw $t8, -220($fp)
@@ -364,7 +364,7 @@ label5:
   li $t9, 4
   mul $t8, $s7, $t9
   sw $t8, -236($fp)
-  la $t9, -8($fp)
+  addi $t9, $fp, -204
   lw $t0, -236($fp)
   add $t2, $t9, $t0
   sw $t2, -240($fp)
