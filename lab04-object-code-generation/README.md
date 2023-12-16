@@ -77,11 +77,11 @@ int allocateReg(VarDes var, FILE *fp, int load)
 
 ### 2）地址操作数的装载
 
-不会。其实必做的两个样例没有用到地址操作数。
+自己试出了一种能通过self_test.cmm的做法。
 
 首先获取空闲寄存器，但不要装载，也不要用`getReg`函数中变量描述符的偏移量。将`getReg`的第三个参数`load`设置为0，获取到空闲寄存器后，将相对于帧指针（$fp）的偏移量为-8的地址加载到该寄存器中。
 
-至于为什么偏移量是-8，我也不知道。 :innocent: （感觉全部的工作量都在这里，也不知道对不对）
+至于为什么偏移量是-8，我也不知道。 :innocent: （试了三个星期，也不知道对不对）
 
 ```c
 // 根据操作数的类型完成装载
@@ -104,6 +104,29 @@ int handleOp(Operand op, FILE *fp, int load)
     }
 }
 ```
+
+另一种做法，获取空闲寄存器时依旧不装载（实际上装载与否，该寄存器都会被`addi`指令覆盖掉），将帧指针（$fp）减去变量描述符的偏移量即可。
+
+```c
+    else if (op->kind == GET_ADDR_OP)
+    {
+        // TODO
+        // int reg = getReg(op->opr, fp, 0);
+        // fprintf(fp, "  la %s, %d($fp)\n", regs[reg]->name, -8);
+        // return reg;
+        int reg = getReg(op->opr, fp, 0);
+        FrameDes frame = findCurrFrame();
+        VarDes var = createVarDes(op->opr, frame);
+        fprintf(fp, "  addi %s, $fp, %d\n", regs[reg]->name, -var->offset);
+        return reg;
+    }
+```
+
+两种做法生成的汇编代码不同之处在于：
+
+![image-20231216110014714](pic/image-20231216110014714.png)
+
+能通过测试的代码就是好代码。
 
 ### 3）ASSIGN_IR
 
